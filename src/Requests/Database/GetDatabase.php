@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Database;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -19,7 +19,7 @@ class GetDatabase extends Request
 
     public function __construct(
         protected string $database,
-        protected ?string $tenant = null,
+        protected ?string $tenant,
     ) {
     }
 

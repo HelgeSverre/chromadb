@@ -26,6 +26,9 @@ class GetCollection extends Request
 
     public function defaultQuery(): array
     {
-        return array_filter(['tenant' => $this->tenant, 'database' => $this->database]);
+        return array_filter([
+            'tenant' => $this->tenant,
+            'database' => $this->database,
+        ]);
     }
 }

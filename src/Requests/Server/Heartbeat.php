@@ -1,12 +1,17 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Server;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
 /**
- * heartbeat
+ * Get the status of the ChromaDB server.
+ *
+ * Example:
+ * {
+ *  "nanosecond heartbeat": 1703831284585978374
+ * }
  */
 class Heartbeat extends Request
 {
@@ -15,9 +20,5 @@ class Heartbeat extends Request
     public function resolveEndpoint(): string
     {
         return '/api/v1/heartbeat';
-    }
-
-    public function __construct()
-    {
     }
 }

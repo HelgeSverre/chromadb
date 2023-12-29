@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Tenant;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -21,7 +21,14 @@ class CreateTenant extends Request implements HasBody
         return '/api/v1/tenants';
     }
 
-    public function __construct()
+    public function __construct(protected string $name)
     {
+    }
+
+    protected function defaultBody(): array
+    {
+        return [
+            'name' => $this->name,
+        ];
     }
 }

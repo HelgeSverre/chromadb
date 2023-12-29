@@ -22,6 +22,9 @@ class CreateCollection extends Request implements HasBody
     }
 
     public function __construct(
+        protected string $name,
+        protected bool $getOrCreate = false,
+        protected ?array $metadata = null,
         protected ?string $tenant = null,
         protected ?string $database = null,
     ) {
@@ -29,6 +32,18 @@ class CreateCollection extends Request implements HasBody
 
     public function defaultQuery(): array
     {
-        return array_filter(['tenant' => $this->tenant, 'database' => $this->database]);
+        return array_filter([
+            'tenant' => $this->tenant,
+            'database' => $this->database,
+        ]);
+    }
+
+    protected function defaultBody(): array
+    {
+        return array_filter([
+            'name' => $this->name,
+            'get_or_create' => $this->getOrCreate,
+            'metadata' => $this->metadata,
+        ]);
     }
 }

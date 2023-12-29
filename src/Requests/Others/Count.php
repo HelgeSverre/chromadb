@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Others;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

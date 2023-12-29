@@ -1,12 +1,12 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Server;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
 /**
- * version
+ * Gets the version of the ChromaDB server.
  */
 class Version extends Request
 {
@@ -15,9 +15,5 @@ class Version extends Request
     public function resolveEndpoint(): string
     {
         return '/api/v1/version';
-    }
-
-    public function __construct()
-    {
     }
 }

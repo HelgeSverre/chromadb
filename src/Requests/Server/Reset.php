@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Server;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -8,9 +8,9 @@ use Saloon\Http\Request;
 use Saloon\Traits\Body\HasJsonBody;
 
 /**
- * upsert
+ * reset
  */
-class Upsert extends Request implements HasBody
+class Reset extends Request implements HasBody
 {
     use HasJsonBody;
 
@@ -18,11 +18,10 @@ class Upsert extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}/upsert";
+        return '/api/v1/reset';
     }
 
-    public function __construct(
-        protected string $collectionId,
-    ) {
+    public function __construct()
+    {
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Database;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -22,12 +22,22 @@ class CreateDatabase extends Request implements HasBody
     }
 
     public function __construct(
+        protected string $name,
         protected ?string $tenant = null,
     ) {
     }
 
     public function defaultQuery(): array
     {
-        return array_filter(['tenant' => $this->tenant]);
+        return array_filter([
+            'tenant' => $this->tenant,
+        ]);
+    }
+
+    protected function defaultBody(): array
+    {
+        return [
+            'name' => $this->name,
+        ];
     }
 }

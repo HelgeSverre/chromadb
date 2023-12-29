@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Others;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -8,9 +8,9 @@ use Saloon\Http\Request;
 use Saloon\Traits\Body\HasJsonBody;
 
 /**
- * get_nearest_neighbors
+ * delete
  */
-class GetNearestNeighbors extends Request implements HasBody
+class Delete extends Request implements HasBody
 {
     use HasJsonBody;
 
@@ -18,7 +18,7 @@ class GetNearestNeighbors extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}/query";
+        return "/api/v1/collections/{$this->collectionId}/delete";
     }
 
     public function __construct(

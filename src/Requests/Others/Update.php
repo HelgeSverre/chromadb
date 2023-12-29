@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Others;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -8,9 +8,9 @@ use Saloon\Http\Request;
 use Saloon\Traits\Body\HasJsonBody;
 
 /**
- * reset
+ * update
  */
-class Reset extends Request implements HasBody
+class Update extends Request implements HasBody
 {
     use HasJsonBody;
 
@@ -18,10 +18,11 @@ class Reset extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/reset';
+        return "/api/v1/collections/{$this->collectionId}/update";
     }
 
-    public function __construct()
-    {
+    public function __construct(
+        protected string $collectionId,
+    ) {
     }
 }

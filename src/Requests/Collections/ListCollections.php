@@ -18,8 +18,8 @@ class ListCollections extends Request
     }
 
     public function __construct(
-        protected mixed $limit = null,
-        protected mixed $offset = null,
+        protected ?int $limit = null,
+        protected ?int $offset = null,
         protected ?string $tenant = null,
         protected ?string $database = null,
     ) {
@@ -27,6 +27,11 @@ class ListCollections extends Request
 
     public function defaultQuery(): array
     {
-        return array_filter(['limit' => $this->limit, 'offset' => $this->offset, 'tenant' => $this->tenant, 'database' => $this->database]);
+        return array_filter([
+            'limit' => $this->limit,
+            'offset' => $this->offset,
+            'tenant' => $this->tenant,
+            'database' => $this->database,
+        ]);
     }
 }

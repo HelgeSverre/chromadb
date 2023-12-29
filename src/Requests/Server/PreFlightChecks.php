@@ -1,20 +1,20 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Collections;
+namespace HelgeSverre\Chromadb\Requests\Server;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
 /**
- * root
+ * pre_flight_checks
  */
-class Root extends Request
+class PreFlightChecks extends Request
 {
     protected Method $method = Method::GET;
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1';
+        return '/api/v1/pre-flight-checks';
     }
 
     public function __construct()

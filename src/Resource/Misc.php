@@ -2,28 +2,28 @@
 
 namespace HelgeSverre\Chromadb\Resource;
 
-use HelgeSverre\Chromadb\Requests\Collections\Add;
-use HelgeSverre\Chromadb\Requests\Collections\Count;
 use HelgeSverre\Chromadb\Requests\Collections\CountCollections;
 use HelgeSverre\Chromadb\Requests\Collections\CreateCollection;
-use HelgeSverre\Chromadb\Requests\Collections\CreateDatabase;
-use HelgeSverre\Chromadb\Requests\Collections\CreateTenant;
-use HelgeSverre\Chromadb\Requests\Collections\Delete;
 use HelgeSverre\Chromadb\Requests\Collections\DeleteCollection;
-use HelgeSverre\Chromadb\Requests\Collections\Get;
 use HelgeSverre\Chromadb\Requests\Collections\GetCollection;
-use HelgeSverre\Chromadb\Requests\Collections\GetDatabase;
-use HelgeSverre\Chromadb\Requests\Collections\GetNearestNeighbors;
-use HelgeSverre\Chromadb\Requests\Collections\GetTenant;
-use HelgeSverre\Chromadb\Requests\Collections\Heartbeat;
 use HelgeSverre\Chromadb\Requests\Collections\ListCollections;
-use HelgeSverre\Chromadb\Requests\Collections\PreFlightChecks;
-use HelgeSverre\Chromadb\Requests\Collections\Reset;
-use HelgeSverre\Chromadb\Requests\Collections\Root;
-use HelgeSverre\Chromadb\Requests\Collections\Update;
 use HelgeSverre\Chromadb\Requests\Collections\UpdateCollection;
-use HelgeSverre\Chromadb\Requests\Collections\Upsert;
-use HelgeSverre\Chromadb\Requests\Collections\Version;
+use HelgeSverre\Chromadb\Requests\Database\CreateDatabase;
+use HelgeSverre\Chromadb\Requests\Database\GetDatabase;
+use HelgeSverre\Chromadb\Requests\Others\Add;
+use HelgeSverre\Chromadb\Requests\Others\Count;
+use HelgeSverre\Chromadb\Requests\Others\Delete;
+use HelgeSverre\Chromadb\Requests\Others\Get;
+use HelgeSverre\Chromadb\Requests\Others\GetNearestNeighbors;
+use HelgeSverre\Chromadb\Requests\Others\Update;
+use HelgeSverre\Chromadb\Requests\Others\Upsert;
+use HelgeSverre\Chromadb\Requests\Server\Heartbeat;
+use HelgeSverre\Chromadb\Requests\Server\HeartBeat;
+use HelgeSverre\Chromadb\Requests\Server\PreFlightChecks;
+use HelgeSverre\Chromadb\Requests\Server\Reset;
+use HelgeSverre\Chromadb\Requests\Server\Version;
+use HelgeSverre\Chromadb\Requests\Tenant\CreateTenant;
+use HelgeSverre\Chromadb\Requests\Tenant\GetTenant;
 use HelgeSverre\Chromadb\Resource;
 use Saloon\Http\Response;
 
@@ -31,7 +31,7 @@ class Misc extends Resource
 {
     public function root(): Response
     {
-        return $this->connector->send(new Root());
+        return $this->connector->send(new HeartBeat());
     }
 
     public function reset(): Response
