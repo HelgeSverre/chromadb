@@ -4,7 +4,7 @@ use HelgeSverre\Chromadb\Chromadb;
 use Dotenv\Dotenv;
 
 beforeEach(function () {
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../../', '.env.example');
     $dotenv->load();
     $this->chromadb = new Chromadb(
         token: $_ENV['CHROMADB_TOKEN'],
@@ -17,7 +17,7 @@ it('creates a collection and confirms if it exists in the list', function () {
 
     $this->chromadb->collections()->delete('test_collection');
 
-    $response = $this->milvus->collections()->create(
+    $response = $this->chromadb->collections()->create(
         collectionName: 'test_collection',
     );
 
