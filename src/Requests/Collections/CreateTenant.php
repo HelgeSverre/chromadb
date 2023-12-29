@@ -2,7 +2,6 @@
 
 namespace HelgeSverre\Chromadb\Requests\Collections;
 
-use DateTime;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -13,18 +12,16 @@ use Saloon\Traits\Body\HasJsonBody;
  */
 class CreateTenant extends Request implements HasBody
 {
-	use HasJsonBody;
+    use HasJsonBody;
 
-	protected Method $method = Method::POST;
+    protected Method $method = Method::POST;
 
+    public function resolveEndpoint(): string
+    {
+        return '/api/v1/tenants';
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/api/v1/tenants";
-	}
-
-
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 }

@@ -10,11 +10,11 @@ use Spatie\LaravelData\Data as SpatieData;
  */
 class CreateCollection extends SpatieData
 {
-	public function __construct(
-		public string $name = null,
-		public mixed $metadata = null,
-		#[MapName('get_or_create')]
-		public bool $getOrCreate = null,
-	) {
-	}
+    public function __construct(
+        public ?string $name = null,
+        public mixed $metadata = null,
+        #[MapName('get_or_create')]
+        public ?bool $getOrCreate = null,
+    ) {
+    }
 }

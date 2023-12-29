@@ -1,0 +1,19 @@
+.idea
+.phpunit.cache
+build
+composer.lock
+coverage
+docs
+phpunit.xml
+phpstan.neon
+testbench.yaml
+vendor
+node_modules
+.env
+.aider*
+
+## My Playground for stuff
+tests/Feature/RealWorldExampleTest.php
+
+# Docker volumns, for testing the package against real service.
+volumes/

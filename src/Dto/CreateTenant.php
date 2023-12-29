@@ -9,8 +9,8 @@ use Spatie\LaravelData\Data as SpatieData;
  */
 class CreateTenant extends SpatieData
 {
-	public function __construct(
-		public string $name = null,
-	) {
-	}
+    public function __construct(
+        public ?string $name = null,
+    ) {
+    }
 }

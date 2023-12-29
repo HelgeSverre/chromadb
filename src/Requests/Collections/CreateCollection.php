@@ -2,7 +2,6 @@
 
 namespace HelgeSverre\Chromadb\Requests\Collections;
 
-use DateTime;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -13,30 +12,23 @@ use Saloon\Traits\Body\HasJsonBody;
  */
 class CreateCollection extends Request implements HasBody
 {
-	use HasJsonBody;
+    use HasJsonBody;
 
-	protected Method $method = Method::POST;
+    protected Method $method = Method::POST;
 
+    public function resolveEndpoint(): string
+    {
+        return '/api/v1/collections';
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/api/v1/collections";
-	}
+    public function __construct(
+        protected ?string $tenant = null,
+        protected ?string $database = null,
+    ) {
+    }
 
-
-	/**
-	 * @param null|string $tenant
-	 * @param null|string $database
-	 */
-	public function __construct(
-		protected ?string $tenant = null,
-		protected ?string $database = null,
-	) {
-	}
-
-
-	public function defaultQuery(): array
-	{
-		return array_filter(['tenant' => $this->tenant, 'database' => $this->database]);
-	}
+    public function defaultQuery(): array
+    {
+        return array_filter(['tenant' => $this->tenant, 'database' => $this->database]);
+    }
 }

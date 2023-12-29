@@ -6,11 +6,11 @@
         "vectorstore",
         "vector",
         "database",
-        "milvus",
+        "chromadb",
         "sdk",
         "php"
     ],
-    "homepage": "https://github.com/helgesverre/milvus",
+    "homepage": "https://github.com/helgesverre/chromadb",
     "license": "MIT",
     "authors": [
         {
@@ -64,7 +64,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ChromadbServiceProvider"
+                "HelgeSverre\\Chromadb\\ChromadbServiceProvider"
             ],
             "aliases": {
                 "Chromadb": "HelgeSverre\\Chromadb\\Facades\\Chromadb"

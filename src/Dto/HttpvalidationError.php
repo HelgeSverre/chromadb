@@ -9,8 +9,8 @@ use Spatie\LaravelData\Data as SpatieData;
  */
 class HttpvalidationError extends SpatieData
 {
-	public function __construct(
-		public array $detail = null,
-	) {
-	}
+    public function __construct(
+        public ?array $detail = null,
+    ) {
+    }
 }

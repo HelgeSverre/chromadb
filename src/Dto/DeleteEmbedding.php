@@ -10,11 +10,11 @@ use Spatie\LaravelData\Data as SpatieData;
  */
 class DeleteEmbedding extends SpatieData
 {
-	public function __construct(
-		public mixed $ids = null,
-		public mixed $where = null,
-		#[MapName('where_document')]
-		public mixed $whereDocument = null,
-	) {
-	}
+    public function __construct(
+        public mixed $ids = null,
+        public mixed $where = null,
+        #[MapName('where_document')]
+        public mixed $whereDocument = null,
+    ) {
+    }
 }

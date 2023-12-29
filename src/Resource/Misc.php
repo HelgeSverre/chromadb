@@ -29,192 +29,113 @@ use Saloon\Http\Response;
 
 class Misc extends Resource
 {
-	public function root(): Response
-	{
-		return $this->connector->send(new Root());
-	}
+    public function root(): Response
+    {
+        return $this->connector->send(new Root());
+    }
 
+    public function reset(): Response
+    {
+        return $this->connector->send(new Reset());
+    }
 
-	public function reset(): Response
-	{
-		return $this->connector->send(new Reset());
-	}
+    public function version(): Response
+    {
+        return $this->connector->send(new Version());
+    }
 
+    public function heartbeat(): Response
+    {
+        return $this->connector->send(new Heartbeat());
+    }
 
-	public function version(): Response
-	{
-		return $this->connector->send(new Version());
-	}
+    public function preFlightChecks(): Response
+    {
+        return $this->connector->send(new PreFlightChecks());
+    }
 
+    public function createDatabase(?string $tenant): Response
+    {
+        return $this->connector->send(new CreateDatabase($tenant));
+    }
 
-	public function heartbeat(): Response
-	{
-		return $this->connector->send(new Heartbeat());
-	}
+    public function getDatabase(string $database, ?string $tenant): Response
+    {
+        return $this->connector->send(new GetDatabase($database, $tenant));
+    }
 
+    public function createTenant(): Response
+    {
+        return $this->connector->send(new CreateTenant());
+    }
 
-	public function preFlightChecks(): Response
-	{
-		return $this->connector->send(new PreFlightChecks());
-	}
+    public function getTenant(string $tenant): Response
+    {
+        return $this->connector->send(new GetTenant($tenant));
+    }
 
+    public function listCollections(mixed $limit, mixed $offset, ?string $tenant, ?string $database): Response
+    {
+        return $this->connector->send(new ListCollections($limit, $offset, $tenant, $database));
+    }
 
-	/**
-	 * @param string $tenant
-	 */
-	public function createDatabase(?string $tenant): Response
-	{
-		return $this->connector->send(new CreateDatabase($tenant));
-	}
+    public function createCollection(?string $tenant, ?string $database): Response
+    {
+        return $this->connector->send(new CreateCollection($tenant, $database));
+    }
 
+    public function countCollections(?string $tenant, ?string $database): Response
+    {
+        return $this->connector->send(new CountCollections($tenant, $database));
+    }
 
-	/**
-	 * @param string $database
-	 * @param string $tenant
-	 */
-	public function getDatabase(string $database, ?string $tenant): Response
-	{
-		return $this->connector->send(new GetDatabase($database, $tenant));
-	}
+    public function add(string $collectionId): Response
+    {
+        return $this->connector->send(new Add($collectionId));
+    }
 
+    public function update(string $collectionId): Response
+    {
+        return $this->connector->send(new Update($collectionId));
+    }
 
-	public function createTenant(): Response
-	{
-		return $this->connector->send(new CreateTenant());
-	}
+    public function upsert(string $collectionId): Response
+    {
+        return $this->connector->send(new Upsert($collectionId));
+    }
 
+    public function get(string $collectionId): Response
+    {
+        return $this->connector->send(new Get($collectionId));
+    }
 
-	/**
-	 * @param string $tenant
-	 */
-	public function getTenant(string $tenant): Response
-	{
-		return $this->connector->send(new GetTenant($tenant));
-	}
+    public function delete(string $collectionId): Response
+    {
+        return $this->connector->send(new Delete($collectionId));
+    }
 
+    public function count(string $collectionId): Response
+    {
+        return $this->connector->send(new Count($collectionId));
+    }
 
-	/**
-	 * @param mixed $limit
-	 * @param mixed $offset
-	 * @param string $tenant
-	 * @param string $database
-	 */
-	public function listCollections(mixed $limit, mixed $offset, ?string $tenant, ?string $database): Response
-	{
-		return $this->connector->send(new ListCollections($limit, $offset, $tenant, $database));
-	}
+    public function getNearestNeighbors(string $collectionId): Response
+    {
+        return $this->connector->send(new GetNearestNeighbors($collectionId));
+    }
 
+    public function getCollection(string $collectionName, ?string $tenant, ?string $database): Response
+    {
+        return $this->connector->send(new GetCollection($collectionName, $tenant, $database));
+    }
 
-	/**
-	 * @param string $tenant
-	 * @param string $database
-	 */
-	public function createCollection(?string $tenant, ?string $database): Response
-	{
-		return $this->connector->send(new CreateCollection($tenant, $database));
-	}
+    public function deleteCollection(string $collectionName, ?string $tenant, ?string $database): Response
+    {
+        return $this->connector->send(new DeleteCollection($collectionName, $tenant, $database));
+    }
 
-
-	/**
-	 * @param string $tenant
-	 * @param string $database
-	 */
-	public function countCollections(?string $tenant, ?string $database): Response
-	{
-		return $this->connector->send(new CountCollections($tenant, $database));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function add(string $collectionId): Response
-	{
-		return $this->connector->send(new Add($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function update(string $collectionId): Response
-	{
-		return $this->connector->send(new Update($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function upsert(string $collectionId): Response
-	{
-		return $this->connector->send(new Upsert($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function get(string $collectionId): Response
-	{
-		return $this->connector->send(new Get($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function delete(string $collectionId): Response
-	{
-		return $this->connector->send(new Delete($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function count(string $collectionId): Response
-	{
-		return $this->connector->send(new Count($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function getNearestNeighbors(string $collectionId): Response
-	{
-		return $this->connector->send(new GetNearestNeighbors($collectionId));
-	}
-
-
-	/**
-	 * @param string $collectionName
-	 * @param string $tenant
-	 * @param string $database
-	 */
-	public function getCollection(string $collectionName, ?string $tenant, ?string $database): Response
-	{
-		return $this->connector->send(new GetCollection($collectionName, $tenant, $database));
-	}
-
-
-	/**
-	 * @param string $collectionName
-	 * @param string $tenant
-	 * @param string $database
-	 */
-	public function deleteCollection(string $collectionName, ?string $tenant, ?string $database): Response
-	{
-		return $this->connector->send(new DeleteCollection($collectionName, $tenant, $database));
-	}
-
-
-	/**
-	 * @param string $collectionId
-	 */
-	public function updateCollection(string $collectionId): Response
-	{
-		return $this->connector->send(new UpdateCollection($collectionId));
-	}
+    public function updateCollection(string $collectionId): Response
+    {
+        return $this->connector->send(new UpdateCollection($collectionId));
+    }
 }

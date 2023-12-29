@@ -2,8 +2,6 @@
 
 namespace HelgeSverre\Chromadb;
 
-use HelgeSverre\Chromadb\Resource\CollectionOperations;
-use HelgeSverre\Chromadb\Resource\VectorOperations;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 use SensitiveParameter;
@@ -23,6 +21,4 @@ class Chromadb extends Connector
     {
         return new TokenAuthenticator($this->token);
     }
-
-
 }

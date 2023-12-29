@@ -2,7 +2,6 @@
 
 namespace HelgeSverre\Chromadb\Requests\Collections;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,28 +10,21 @@ use Saloon\Http\Request;
  */
 class GetDatabase extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/api/v1/databases/{$this->database}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/api/v1/databases/{$this->database}";
-	}
+    public function __construct(
+        protected string $database,
+        protected ?string $tenant = null,
+    ) {
+    }
 
-
-	/**
-	 * @param string $database
-	 * @param null|string $tenant
-	 */
-	public function __construct(
-		protected string $database,
-		protected ?string $tenant = null,
-	) {
-	}
-
-
-	public function defaultQuery(): array
-	{
-		return array_filter(['tenant' => $this->tenant]);
-	}
+    public function defaultQuery(): array
+    {
+        return array_filter(['tenant' => $this->tenant]);
+    }
 }

@@ -9,10 +9,10 @@ use Spatie\LaravelData\Data as SpatieData;
  */
 class ValidationError extends SpatieData
 {
-	public function __construct(
-		public array $loc = null,
-		public string $msg = null,
-		public string $type = null,
-	) {
-	}
+    public function __construct(
+        public ?array $loc = null,
+        public ?string $msg = null,
+        public ?string $type = null,
+    ) {
+    }
 }

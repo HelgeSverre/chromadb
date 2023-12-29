@@ -10,11 +10,11 @@ use Spatie\LaravelData\Data as SpatieData;
  */
 class UpdateCollection extends SpatieData
 {
-	public function __construct(
-		#[MapName('new_name')]
-		public mixed $newName = null,
-		#[MapName('new_metadata')]
-		public mixed $newMetadata = null,
-	) {
-	}
+    public function __construct(
+        #[MapName('new_name')]
+        public mixed $newName = null,
+        #[MapName('new_metadata')]
+        public mixed $newMetadata = null,
+    ) {
+    }
 }
