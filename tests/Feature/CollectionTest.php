@@ -1,18 +1,24 @@
 <?php
 
 use HelgeSverre\Chromadb\Chromadb;
+use Dotenv\Dotenv;
 
 beforeEach(function () {
-    $this->milvus = new Chromadb('', 'localhost', '19530');
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv->load();
+    $this->chromadb = new Chromadb(
+        token: $_ENV['CHROMADB_TOKEN'],
+        host: $_ENV['CHROMADB_HOST'],
+        port: $_ENV['CHROMADB_PORT']
+    );
 });
 
 it('creates a collection and confirms if it exists in the list', function () {
 
-    $this->milvus->collections()->drop('test_collection');
+    $this->chromadb->collections()->delete('test_collection');
 
     $response = $this->milvus->collections()->create(
         collectionName: 'test_collection',
-        dimension: 128,
     );
 
     expect($response->json('code'))->toEqual(200);
@@ -23,7 +29,7 @@ it('creates a collection and confirms if it exists in the list', function () {
 
     expect($response->collect('data'))->toContain('test_collection');
 
-    $response = $this->milvus->collections()->drop(collectionName: 'test_collection');
+    $response = $this->chromadb->collections()->delete(collectionName: 'test_collection');
     expect($response->json('code'))->toEqual(200);
 
     sleep(1);
