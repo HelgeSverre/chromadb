@@ -5,11 +5,12 @@ use Dotenv\Dotenv;
 
 beforeEach(function () {
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../../', '.env.example');
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../../', '.env.example');
     $dotenv->load();
     $this->chromadb = new Chromadb(
-        token: $_ENV['CHROMADB_TOKEN'],
-        host: $_ENV['CHROMADB_HOST'],
-        port: $_ENV['CHROMADB_PORT']
+        $_ENV['CHROMADB_TOKEN'],
+        $_ENV['CHROMADB_HOST'],
+        $_ENV['CHROMADB_PORT']
     );
 });
 
