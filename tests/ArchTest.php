@@ -7,10 +7,10 @@ it('will not use debugging functions')
     ->each->not->toBeUsed();
 
 it('All resource classes extend the base resource')
-    ->expect('HelgeSverre\Milvus\Resource')
+    ->expect('HelgeSverre\Chromadb\Resource')
     ->toExtend('Saloon\Http\BaseResource');
 
 it('All request classes extend the saloon request class')
-    ->expect('HelgeSverre\Milvus\Requests')
+    ->expect('HelgeSverre\Chromadb\Requests')
     ->classes()
     ->toExtend('Saloon\Http\Request');

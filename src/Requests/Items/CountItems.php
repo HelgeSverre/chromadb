@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Others;
+namespace HelgeSverre\Chromadb\Requests\Items;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -8,7 +8,7 @@ use Saloon\Http\Request;
 /**
  * count
  */
-class Count extends Request
+class CountItems extends Request
 {
     protected Method $method = Method::GET;
 

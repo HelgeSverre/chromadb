@@ -1,9 +1,9 @@
 <?php
 
-use HelgeSverre\Milvus\Milvus;
+use HelgeSverre\Chromadb\Chromadb;
 
 beforeEach(function () {
-    $this->milvus = new Milvus('', 'localhost', '19530');
+    $this->milvus = new Chromadb('', 'localhost', '19530');
 });
 
 it('creates a collection and confirms if it exists in the list', function () {

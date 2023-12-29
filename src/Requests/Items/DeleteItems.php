@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Requests\Others;
+namespace HelgeSverre\Chromadb\Requests\Items;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -10,7 +10,7 @@ use Saloon\Traits\Body\HasJsonBody;
 /**
  * delete
  */
-class Delete extends Request implements HasBody
+class DeleteItems extends Request implements HasBody
 {
     use HasJsonBody;
 
@@ -23,6 +23,19 @@ class Delete extends Request implements HasBody
 
     public function __construct(
         protected string $collectionId,
+        protected array $ids = [],
+        protected array $where = [],
+
+        protected array $whereDocument = [],
     ) {
+    }
+
+    protected function defaultBody(): array
+    {
+        return [
+            'ids' => $this->ids,
+            'where' => $this->where,
+            'whereDocument' => $this->whereDocument,
+        ];
     }
 }

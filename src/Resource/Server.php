@@ -10,24 +10,23 @@ use HelgeSverre\Chromadb\Requests\Collections\ListCollections;
 use HelgeSverre\Chromadb\Requests\Collections\UpdateCollection;
 use HelgeSverre\Chromadb\Requests\Database\CreateDatabase;
 use HelgeSverre\Chromadb\Requests\Database\GetDatabase;
-use HelgeSverre\Chromadb\Requests\Others\Add;
-use HelgeSverre\Chromadb\Requests\Others\Count;
-use HelgeSverre\Chromadb\Requests\Others\Delete;
-use HelgeSverre\Chromadb\Requests\Others\Get;
-use HelgeSverre\Chromadb\Requests\Others\GetNearestNeighbors;
-use HelgeSverre\Chromadb\Requests\Others\Update;
-use HelgeSverre\Chromadb\Requests\Others\Upsert;
+use HelgeSverre\Chromadb\Requests\Items\AddItems;
+use HelgeSverre\Chromadb\Requests\Items\CountItems;
+use HelgeSverre\Chromadb\Requests\Items\DeleteItems;
+use HelgeSverre\Chromadb\Requests\Items\GetItems;
+use HelgeSverre\Chromadb\Requests\Items\QueryItems;
+use HelgeSverre\Chromadb\Requests\Items\UpdateItems;
+use HelgeSverre\Chromadb\Requests\Items\UpsertItems;
 use HelgeSverre\Chromadb\Requests\Server\Heartbeat;
-use HelgeSverre\Chromadb\Requests\Server\HeartBeat;
 use HelgeSverre\Chromadb\Requests\Server\PreFlightChecks;
 use HelgeSverre\Chromadb\Requests\Server\Reset;
 use HelgeSverre\Chromadb\Requests\Server\Version;
 use HelgeSverre\Chromadb\Requests\Tenant\CreateTenant;
 use HelgeSverre\Chromadb\Requests\Tenant\GetTenant;
-use HelgeSverre\Chromadb\Resource;
+use Saloon\Http\BaseResource;
 use Saloon\Http\Response;
 
-class Misc extends Resource
+class Server extends BaseResource
 {
     public function root(): Response
     {
@@ -91,37 +90,37 @@ class Misc extends Resource
 
     public function add(string $collectionId): Response
     {
-        return $this->connector->send(new Add($collectionId));
+        return $this->connector->send(new AddItems($collectionId));
     }
 
     public function update(string $collectionId): Response
     {
-        return $this->connector->send(new Update($collectionId));
+        return $this->connector->send(new UpdateItems($collectionId));
     }
 
     public function upsert(string $collectionId): Response
     {
-        return $this->connector->send(new Upsert($collectionId));
+        return $this->connector->send(new UpsertItems($collectionId));
     }
 
     public function get(string $collectionId): Response
     {
-        return $this->connector->send(new Get($collectionId));
+        return $this->connector->send(new GetItems($collectionId));
     }
 
     public function delete(string $collectionId): Response
     {
-        return $this->connector->send(new Delete($collectionId));
+        return $this->connector->send(new DeleteItems($collectionId));
     }
 
     public function count(string $collectionId): Response
     {
-        return $this->connector->send(new Count($collectionId));
+        return $this->connector->send(new CountItems($collectionId));
     }
 
     public function getNearestNeighbors(string $collectionId): Response
     {
-        return $this->connector->send(new GetNearestNeighbors($collectionId));
+        return $this->connector->send(new QueryItems($collectionId));
     }
 
     public function getCollection(string $collectionName, ?string $tenant, ?string $database): Response
