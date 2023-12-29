@@ -1,20 +1,10 @@
 version: '3.9'
 
-networks:
-  net:
-    driver: bridge
-
 services:
-  server:
-    image: server
-    build:
-      context: .
-      dockerfile: Dockerfile
+  chroma:
+    image: chromadb/chroma:latest
     volumes:
-      # Be aware that indexed data are located in "/chroma/chroma/"
-      # Default configuration for persist_directory in chromadb/config.py
-      # Read more about deployments: https://docs.trychroma.com/deployment
-      - chroma-data:/chroma/chroma
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/chroma:/chroma/chroma
     command: uvicorn chromadb.app:app --reload --workers 1 --host 0.0.0.0 --port 8000 --log-config chromadb/log_config.yml --timeout-keep-alive 30
     environment:
       - IS_PERSISTENT=TRUE
@@ -22,16 +12,5 @@ services:
       - CHROMA_SERVER_AUTH_CREDENTIALS=test-token-chroma-local-dev
       - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER=chromadb.auth.token.TokenConfigServerAuthCredentialsProvider
       - PERSIST_DIRECTORY=${PERSIST_DIRECTORY:-/chroma/chroma}
-      - CHROMA_OTEL_EXPORTER_ENDPOINT=${CHROMA_OTEL_EXPORTER_ENDPOINT}
-      - CHROMA_OTEL_EXPORTER_HEADERS=${CHROMA_OTEL_EXPORTER_HEADERS}
-      - CHROMA_OTEL_SERVICE_NAME=${CHROMA_OTEL_SERVICE_NAME}
-      - CHROMA_OTEL_GRANULARITY=${CHROMA_OTEL_GRANULARITY}
-      - CHROMA_SERVER_NOFILE=${CHROMA_SERVER_NOFILE}
     ports:
-      - 8000:8000
-    networks:
-      - net
-
-volumes:
-  chroma-data:
-    driver: local
+      - "8000:8000"
