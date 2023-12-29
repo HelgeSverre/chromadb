@@ -12,21 +12,25 @@ beforeEach(function () {
 
 it('can perform a server heartbeat', function () {
     $response = $this->chromadb->server()->heartbeat();
-    expect($response->status())->toEqual(200);
+
+    expect($response->status())->toEqual(200)
+        ->and($response->json())->toHaveKey('nanosecond heartbeat');
 });
 
 it('can perform a server pre-flight check', function () {
     $response = $this->chromadb->server()->preFlightChecks();
-    expect($response->status())->toEqual(200);
+
+    expect($response->status())->toEqual(200)
+        ->and($response->json())->toBeArray();
 });
 
 it('can reset the server', function () {
-    $response = $this->chromadb->server()->reset();
-    expect($response->status())->toEqual(200);
+    $success = $this->chromadb->server()->reset();
+
+    expect($success)->toEqual(200);
 });
 
 it('can retrieve the server version', function () {
-    $response = $this->chromadb->server()->version();
-    expect($response->status())->toEqual(200);
-    expect($response->json())->toHaveKey('version');
+    $version = $this->chromadb->server()->version();
+    expect($version)->toEqual('0.4.21');
 });
