@@ -44,7 +44,7 @@ class Items extends BaseResource
         return $this->connector->send(new CountItems($collectionId));
     }
 
-    public function getNearestNeighbors(string $collectionId): Response
+    public function query(string $collectionId): Response
     {
         return $this->connector->send(new QueryItems($collectionId));
     }
