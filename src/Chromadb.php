@@ -2,11 +2,11 @@
 
 namespace HelgeSverre\Chromadb;
 
-use HelgeSverre\Chromadb\Resource\Collections;
-use HelgeSverre\Chromadb\Resource\Database;
-use HelgeSverre\Chromadb\Resource\Items;
-use HelgeSverre\Chromadb\Resource\Server;
-use HelgeSverre\Chromadb\Resource\Tenant;
+use HelgeSverre\Chromadb\Resources\Collections;
+use HelgeSverre\Chromadb\Resources\Database;
+use HelgeSverre\Chromadb\Resources\Items;
+use HelgeSverre\Chromadb\Resources\Server;
+use HelgeSverre\Chromadb\Resources\Tenant;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 use SensitiveParameter;

@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Resource;
+namespace HelgeSverre\Chromadb\Resources;
 
 use HelgeSverre\Chromadb\Requests\Server\Heartbeat;
 use HelgeSverre\Chromadb\Requests\Server\PreFlightChecks;

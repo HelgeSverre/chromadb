@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\Chromadb\Resource;
+namespace HelgeSverre\Chromadb\Resources;
 
 use HelgeSverre\Chromadb\Requests\Items\AddItems;
 use HelgeSverre\Chromadb\Requests\Items\CountItems;
