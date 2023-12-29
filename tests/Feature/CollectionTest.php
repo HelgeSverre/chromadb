@@ -1,15 +1,12 @@
 <?php
 
 use HelgeSverre\Chromadb\Chromadb;
-use Dotenv\Dotenv;
 
 beforeEach(function () {
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/../../', '.env.example');
-    $dotenv->load();
     $this->chromadb = new Chromadb(
-        token: $_ENV['CHROMADB_TOKEN'],
-        host: $_ENV['CHROMADB_HOST'],
-        port: $_ENV['CHROMADB_PORT']
+        token: "test-token-chroma-local-dev",
+        host: "http://localhost",
+        port: "8000"
     );
 });
 
