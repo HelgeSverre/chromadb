@@ -17,11 +17,10 @@ class Items extends BaseResource
     public function add(
         string $collectionId,
         ?array $ids = null,
-        ?array $embeddings = null,
-        ?array $metadatas = null,
-        ?array $documents = null
-    ): Response
-    {
+        null|array|string $embeddings = null,
+        null|array|string $metadatas = null,
+        null|array|string $documents = null
+    ): Response {
         return $this->connector->send(new AddItems(
             collectionId: $collectionId,
             ids: $ids,
@@ -34,11 +33,10 @@ class Items extends BaseResource
     public function update(
         string $collectionId,
         array $ids,
-        ?array $embeddings = null,
-        ?array $metadatas = null,
-        ?array $documents = null
-    ): Response
-    {
+        null|array|string $embeddings = null,
+        null|array|string $metadatas = null,
+        null|array|string $documents = null
+    ): Response {
         return $this->connector->send(new UpdateItems(
             collectionId: $collectionId,
             ids: $ids,
@@ -51,11 +49,10 @@ class Items extends BaseResource
     public function upsert(
         string $collectionId,
         array $ids,
-        ?array $embeddings = null,
-        ?array $metadatas = null,
-        ?array $documents = null
-    ): Response
-    {
+        null|array|string $embeddings = null,
+        null|array|string $metadatas = null,
+        null|array|string $documents = null
+    ): Response {
         return $this->connector->send(new UpsertItems(
             collectionId: $collectionId,
             ids: $ids,
@@ -67,8 +64,7 @@ class Items extends BaseResource
 
     public function get(
         string $collectionId
-    ): Response
-    {
+    ): Response {
         return $this->connector->send(new GetItems(
             collectionId: $collectionId
         ));
@@ -79,8 +75,7 @@ class Items extends BaseResource
         array $ids = [],
         array $where = [],
         array $whereDocument = []
-    ): Response
-    {
+    ): Response {
         return $this->connector->send(new DeleteItems(
             collectionId: $collectionId,
             ids: $ids,
@@ -91,8 +86,7 @@ class Items extends BaseResource
 
     public function count(
         string $collectionId
-    ): Response
-    {
+    ): Response {
         return $this->connector->send(new CountItems(
             collectionId: $collectionId
         ));
@@ -105,8 +99,7 @@ class Items extends BaseResource
         array $whereDocument = [],
         array $include = ['embeddings', 'documents', 'metadatas'],
         int $nResults = 10
-    ): Response
-    {
+    ): Response {
         return $this->connector->send(new QueryItems(
             collectionId: $collectionId,
             queryEmbeddings: $queryEmbeddings,

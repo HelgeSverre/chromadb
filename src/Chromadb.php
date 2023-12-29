@@ -2,6 +2,11 @@
 
 namespace HelgeSverre\Chromadb;
 
+use HelgeSverre\Chromadb\Resource\Collections;
+use HelgeSverre\Chromadb\Resource\Database;
+use HelgeSverre\Chromadb\Resource\Items;
+use HelgeSverre\Chromadb\Resource\Server;
+use HelgeSverre\Chromadb\Resource\Tenant;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 use SensitiveParameter;
@@ -21,35 +26,42 @@ class Chromadb extends Connector
         return new TokenAuthenticator($this->token);
     }
 
+    protected function defaultHeaders(): array
+    {
+        return [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+    }
+
     public function resolveBaseUrl(): string
     {
         return "{$this->host}:{$this->port}";
     }
 
     // Resources
-
-    public function collections()
+    public function collections(): Collections
     {
-        // TODO: implement
+        return new Collections($this);
     }
 
-    public function items()
+    public function items(): Items
     {
-        // TODO: implement
+        return new Items($this);
     }
 
-    public function database()
+    public function database(): Database
     {
-        // TODO: implement
+        return new Database($this);
     }
 
-    public function tenant()
+    public function tenant(): Tenant
     {
-        // TODO: implement
+        return new Tenant($this);
     }
 
-    public function server()
+    public function server(): Server
     {
-        // TODO: implement
+        return new Server($this);
     }
 }

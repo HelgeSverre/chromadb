@@ -13,33 +13,80 @@ use Saloon\Http\Response;
 
 class Collections extends BaseResource
 {
-    public function listCollections(mixed $limit, mixed $offset, ?string $tenant, ?string $database): Response
-    {
-        return $this->connector->send(new ListCollections($limit, $offset, $tenant, $database));
+    public function list(
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new ListCollections(
+            limit: $limit,
+            offset: $offset,
+            tenant: $tenant,
+            database: $database,
+        ));
     }
 
-    public function createCollection(?string $tenant, ?string $database): Response
-    {
-        return $this->connector->send(new CreateCollection($tenant, $database));
+    public function create(
+        string $name,
+        bool $getOrCreate = false,
+        ?array $metadata = null,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new CreateCollection(
+            name: $name,
+            getOrCreate: $getOrCreate,
+            metadata: $metadata,
+            tenant: $tenant,
+            database: $database,
+        ));
     }
 
-    public function countCollections(?string $tenant, ?string $database): Response
-    {
-        return $this->connector->send(new CountCollections($tenant, $database));
+    public function count(
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new CountCollections(
+            tenant: $tenant,
+            database: $database
+        ));
     }
 
-    public function getCollection(string $collectionName, ?string $tenant, ?string $database): Response
-    {
-        return $this->connector->send(new GetCollection($collectionName, $tenant, $database));
+    public function get(
+        string $collectionName,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new GetCollection(
+            collectionName: $collectionName,
+            tenant: $tenant,
+            database: $database
+        ));
     }
 
-    public function deleteCollection(string $collectionName, ?string $tenant, ?string $database): Response
-    {
-        return $this->connector->send(new DeleteCollection($collectionName, $tenant, $database));
+    public function delete(
+        string $collectionName,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new DeleteCollection(
+            collectionName: $collectionName,
+            tenant: $tenant,
+            database: $database
+
+        ));
     }
 
-    public function updateCollection(string $collectionId): Response
-    {
-        return $this->connector->send(new UpdateCollection($collectionId));
+    public function update(
+        string $collectionId,
+        ?string $newName = null,
+        ?array $newMetadata = null,
+    ): Response {
+        return $this->connector->send(new UpdateCollection(
+            collectionId: $collectionId,
+            newName: $newName,
+            newMetadata: $newMetadata,
+        ));
     }
 }

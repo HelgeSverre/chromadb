@@ -9,12 +9,12 @@ use Saloon\Http\Response;
 
 class Tenant extends BaseResource
 {
-    public function createTenant(string $name): Response
+    public function create(string $name): Response
     {
         return $this->connector->send(new CreateTenant($name));
     }
 
-    public function getTenant(string $tenant): Response
+    public function get(string $tenant): Response
     {
         return $this->connector->send(new GetTenant($tenant));
     }
