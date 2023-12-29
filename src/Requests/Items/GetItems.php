@@ -23,6 +23,24 @@ class GetItems extends Request implements HasBody
 
     public function __construct(
         protected string $collectionId,
+        protected string|array $ids,
+        protected ?array $include = null,
+        protected ?int $limit = null,
+        protected ?int $offset = null,
+        protected ?array $where = null,
+        protected ?array $whereDocument = null,
     ) {
+    }
+
+    protected function defaultBody(): array
+    {
+        return array_filter([
+            'ids' => $this->ids,
+            'include' => $this->include,
+            'limit' => $this->limit,
+            'offset' => $this->offset,
+            'where' => $this->where,
+            'whereDocument' => $this->whereDocument,
+        ]);
     }
 }

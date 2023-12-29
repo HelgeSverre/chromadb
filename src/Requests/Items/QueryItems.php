@@ -23,24 +23,24 @@ class QueryItems extends Request implements HasBody
 
     public function __construct(
         protected string $collectionId,
-        protected array $queryEmbeddings,
-        protected array $where = [],
-        protected array $whereDocument = [],
-
-        // can by any of : "distances", "embeddings", "documents", "metadatas"
-        protected array $include = ['embeddings', 'documents', 'metadatas'],
-        protected int $nResults = 10,
+        protected array $queryEmbeddings = [],
+        protected ?array $queryTexts = null,
+        protected ?array $where = null,
+        protected ?array $whereDocument = null,
+        protected ?array $include = null,
+        protected ?int $nResults = null,
     ) {
     }
 
     protected function defaultBody(): array
     {
-        return array_filter([
+        return [
             'where' => $this->where,
             'where_document' => $this->whereDocument,
             'query_embeddings' => $this->queryEmbeddings,
+            'query_texts' => $this->queryTexts,
             'n_results' => $this->nResults,
             'include' => $this->include,
-        ]);
+        ];
     }
 }

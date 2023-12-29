@@ -151,18 +151,30 @@ it('retrieves items correctly', function () {
     $collectionId = $collectionCreate->json('id');
 
     // Add items
-    $this->chromadb->items()->add(
+    $res = $this->chromadb->items()->add(
         collectionId: $collectionId,
-        ids: ['item1', 'item2'],
-        embeddings: ['embedding1', 'embedding2'],
-        metadatas: ['metadata1', 'metadata2'],
-        documents: ['document1', 'document2']
+        ids: ['item1', 'item2', 'item3'],
+        documents: ['document1', 'document2', 'document3']
     );
 
     // Retrieve items
-    $getItemsResponse = $this->chromadb->items()->get(collectionId: $collectionId);
-    expect($getItemsResponse->ok())->toBeTrue();
-    expect($getItemsResponse->json())->toHaveCount(2);
+    $getItemsResponse = $this->chromadb->items()->get(
+        collectionId: $collectionId,
+        ids: ['item1', 'item3'],
+        include: ['documents']
+    );
+
+    expect($getItemsResponse->ok())->toBeTrue()
+        ->and($getItemsResponse->json('ids'))->toHaveCount(2)
+        ->and($getItemsResponse->json('ids'))->toEqual([
+            'item1',
+            'item3',
+        ])
+        ->and($getItemsResponse->json('documents'))->toHaveCount(2)
+        ->and($getItemsResponse->json('documents'))->toEqual([
+            'document1',
+            'document3',
+        ]);
 });
 
 it('updates items with ids, documents and metadatas correctly', function () {
@@ -240,22 +252,29 @@ it('queries items correctly', function () {
     $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: ['item1', 'item2'],
-        embeddings: ['embedding1', 'embedding2'],
-        metadatas: ['metadata1', 'metadata2'],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.9),
+        ],
+        metadatas: [
+            ['title' => 'metadata1'],
+            ['title' => 'metadata2'],
+        ],
         documents: ['document1', 'document2']
     );
 
     // Query items
     $queryItemsResponse = $this->chromadb->items()->query(
         collectionId: $collectionId,
-        queryEmbeddings: ['query_embedding1'],
-        where: ['field' => 'value'],
-        whereDocument: ['field' => 'value'],
-        include: ['embeddings', 'documents', 'metadatas'],
-        nResults: 5
+        queryEmbeddings: [createTestVector(0.8)],
+        include: ['documents', 'metadatas', 'distances'],
+        nResults: 2
     );
+
     expect($queryItemsResponse->ok())->toBeTrue()
-        ->and($queryItemsResponse->json())->toHaveCount(2);
+        ->and($queryItemsResponse->json('ids.0'))->toHaveCount(2)
+        ->and($queryItemsResponse->json('distances.0'))->toHaveCount(2)
+        ->and($queryItemsResponse->json('documents.0'))->toHaveCount(2);
 });
 
 it('deletes items correctly', function () {

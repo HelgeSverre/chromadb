@@ -63,10 +63,22 @@ class Items extends BaseResource
     }
 
     public function get(
-        string $collectionId
+        string $collectionId,
+        string|array $ids,
+        ?array $include = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?array $where = null,
+        ?array $whereDocument = null,
     ): Response {
         return $this->connector->send(new GetItems(
-            collectionId: $collectionId
+            collectionId: $collectionId,
+            ids: $ids,
+            include: $include,
+            limit: $limit,
+            offset: $offset,
+            where: $where,
+            whereDocument: $whereDocument,
         ));
     }
 
@@ -97,15 +109,17 @@ class Items extends BaseResource
 
     public function query(
         string $collectionId,
-        array $queryEmbeddings,
-        array $where = [],
-        array $whereDocument = [],
-        array $include = ['embeddings', 'documents', 'metadatas'],
-        int $nResults = 10
+        array $queryEmbeddings = [],
+        ?array $queryTexts = null,
+        ?array $where = null,
+        ?array $whereDocument = null,
+        ?array $include = null,
+        ?int $nResults = null,
     ): Response {
         return $this->connector->send(new QueryItems(
             collectionId: $collectionId,
             queryEmbeddings: $queryEmbeddings,
+            queryTexts: $queryTexts,
             where: $where,
             whereDocument: $whereDocument,
             include: $include,
