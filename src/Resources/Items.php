@@ -18,7 +18,7 @@ class Items extends BaseResource
         string $collectionId,
         ?array $ids = null,
         null|array|string $embeddings = null,
-        null|array|string $metadatas = null,
+        ?array $metadatas = null,
         null|array|string $documents = null
     ): Response {
         return $this->connector->send(new AddItems(
@@ -34,7 +34,7 @@ class Items extends BaseResource
         string $collectionId,
         array $ids,
         null|array|string $embeddings = null,
-        null|array|string $metadatas = null,
+        ?array $metadatas = null,
         null|array|string $documents = null
     ): Response {
         return $this->connector->send(new UpdateItems(
@@ -50,7 +50,7 @@ class Items extends BaseResource
         string $collectionId,
         array $ids,
         null|array|string $embeddings = null,
-        null|array|string $metadatas = null,
+        ?array $metadatas = null,
         null|array|string $documents = null
     ): Response {
         return $this->connector->send(new UpsertItems(
@@ -72,9 +72,9 @@ class Items extends BaseResource
 
     public function delete(
         string $collectionId,
-        array $ids = [],
-        array $where = [],
-        array $whereDocument = []
+        ?array $ids = null,
+        ?array $where = null,
+        ?array $whereDocument = null
     ): Response {
         return $this->connector->send(new DeleteItems(
             collectionId: $collectionId,
@@ -86,10 +86,13 @@ class Items extends BaseResource
 
     public function count(
         string $collectionId
-    ): Response {
-        return $this->connector->send(new CountItems(
+    ): int {
+        $response = $this->connector->send(new CountItems(
             collectionId: $collectionId
         ));
+
+        // The response from this endpoint is not JSON, its just plain text.
+        return (int) $response->body();
     }
 
     public function query(

@@ -13,20 +13,104 @@ beforeEach(function () {
     $this->chromadb->server()->reset();
 });
 
-it('adds items correctly', function () {
+it('adds items with ids and metadatas  correctly', function () {
     $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
     // Add items
     $addItemsResponse = $this->chromadb->items()->add(
         collectionId: $collectionId,
-        ids: ['item1', 'item2'],
-        embeddings: ['embedding1', 'embedding2'],
-        metadatas: ['metadata1', 'metadata2'],
-        documents: ['document1', 'document2']
+        ids: [
+            'item1',
+            'item2',
+        ],
+        metadatas: [
+            ['title' => 'metadata1'],
+            ['title' => 'metadata2'],
+        ],
     );
-    expect($addItemsResponse->ok())->toBeTrue();
+
+    expect($addItemsResponse->successful())->toBeTrue()
+        ->and($addItemsResponse->status())->toEqual(201);
+});
+
+it('adds items with ids, documents and embeddings correctly', function () {
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+
+    expect($collectionCreate->ok())->toBeTrue();
+    $collectionId = $collectionCreate->json('id');
+
+    // Add items
+    $addItemsResponse = $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: [
+            'item1',
+            'item2',
+        ],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.2),
+        ],
+        documents: [
+            'text for item 1',
+            'text for item 2',
+        ],
+    );
+
+    expect($addItemsResponse->successful())->toBeTrue()
+        ->and($addItemsResponse->status())->toEqual(201);
+});
+
+it('adds items with ids and documents correctly', function () {
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+
+    expect($collectionCreate->ok())->toBeTrue();
+    $collectionId = $collectionCreate->json('id');
+
+    // Add items
+    $addItemsResponse = $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: [
+            'item1',
+            'item2',
+        ],
+        documents: [
+            'text for item 1',
+            'text for item 2',
+        ],
+    );
+
+    expect($addItemsResponse->successful())->toBeTrue()
+        ->and($addItemsResponse->status())->toEqual(201);
+});
+
+it('adds items with ids, metadata and documents correctly', function () {
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+
+    expect($collectionCreate->ok())->toBeTrue();
+    $collectionId = $collectionCreate->json('id');
+
+    // Add items
+    $addItemsResponse = $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: [
+            'item1',
+            'item2',
+        ],
+        metadatas: [
+            ['title' => 'metadata1'],
+            ['title' => 'metadata2'],
+        ],
+        documents: [
+            'text for item 1',
+            'text for item 2',
+        ],
+    );
+
+    expect($addItemsResponse->successful())->toBeTrue()
+        ->and($addItemsResponse->status())->toEqual(201);
 });
 
 it('counts items correctly', function () {
@@ -37,16 +121,28 @@ it('counts items correctly', function () {
     // Add items
     $this->chromadb->items()->add(
         collectionId: $collectionId,
-        ids: ['item1', 'item2'],
-        embeddings: ['embedding1', 'embedding2'],
-        metadatas: ['metadata1', 'metadata2'],
-        documents: ['document1', 'document2']
+        ids: ['item1'],
+        metadatas: [['title' => 'metadata1']],
+        documents: ['document1']
     );
 
     // Count items
-    $countItemsResponse = $this->chromadb->items()->count(collectionId: $collectionId);
-    expect($countItemsResponse->ok())->toBeTrue();
-    expect($countItemsResponse->json())->toEqual(2);
+    $itemCount = $this->chromadb->items()->count(collectionId: $collectionId);
+
+    expect($itemCount)->toEqual(1);
+
+    // Add items
+    $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: ['item2'],
+        metadatas: [['title' => 'metadata2']],
+        documents: ['document2']
+    );
+
+    // Count items again
+    $itemCount = $this->chromadb->items()->count(collectionId: $collectionId);
+
+    expect($itemCount)->toEqual(2);
 });
 
 it('retrieves items correctly', function () {
@@ -69,29 +165,54 @@ it('retrieves items correctly', function () {
     expect($getItemsResponse->json())->toHaveCount(2);
 });
 
-it('updates items correctly', function () {
+it('updates items with ids, documents and metadatas correctly', function () {
     $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
     expect($collectionCreate->ok())->toBeTrue();
+
     $collectionId = $collectionCreate->json('id');
 
     // Add items
     $this->chromadb->items()->add(
         collectionId: $collectionId,
-        ids: ['item1'],
-        embeddings: ['embedding1'],
-        metadatas: ['metadata1'],
-        documents: ['document1']
+        ids: ['item'],
+        metadatas: [['title' => 'metadata']],
+        documents: ['document']
     );
 
     // Update items
     $updateItemsResponse = $this->chromadb->items()->update(
         collectionId: $collectionId,
-        ids: ['item1'],
-        embeddings: ['updated_embedding1'],
-        metadatas: ['updated_metadata1'],
-        documents: ['updated_document1']
+        ids: ['item'],
+        metadatas: [['title' => 'updated_metadata']],
+        documents: ['updated_document']
     );
-    expect($updateItemsResponse->ok())->toBeTrue();
+
+    expect($updateItemsResponse->successful())->toBeTrue();
+});
+
+it('updates documents with ids, embeddings and metadatas correctly', function () {
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    expect($collectionCreate->ok())->toBeTrue();
+
+    $collectionId = $collectionCreate->json('id');
+
+    // Add items
+    $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: ['item'],
+        metadatas: [['title' => 'metadata']],
+        documents: ['document']
+    );
+
+    // Update items
+    $updateItemsResponse = $this->chromadb->items()->update(
+        collectionId: $collectionId,
+        ids: ['item'],
+        metadatas: [['title' => 'updated_metadata']],
+        documents: ['updated_document']
+    );
+
+    expect($updateItemsResponse->successful())->toBeTrue();
 });
 
 it('upserts items correctly', function () {
@@ -102,11 +223,11 @@ it('upserts items correctly', function () {
     // Upsert items
     $upsertItemsResponse = $this->chromadb->items()->upsert(
         collectionId: $collectionId,
-        ids: ['item3'],
-        embeddings: ['embedding3'],
-        metadatas: ['metadata3'],
-        documents: ['document3']
+        ids: ['item'],
+        metadatas: [['title' => 'metadata']],
+        documents: ['document']
     );
+
     expect($upsertItemsResponse->ok())->toBeTrue();
 });
 
@@ -133,8 +254,8 @@ it('queries items correctly', function () {
         include: ['embeddings', 'documents', 'metadatas'],
         nResults: 5
     );
-    expect($queryItemsResponse->ok())->toBeTrue();
-    expect($queryItemsResponse->json())->toHaveCount(2);
+    expect($queryItemsResponse->ok())->toBeTrue()
+        ->and($queryItemsResponse->json())->toHaveCount(2);
 });
 
 it('deletes items correctly', function () {
@@ -145,10 +266,14 @@ it('deletes items correctly', function () {
     // Add items
     $this->chromadb->items()->add(
         collectionId: $collectionId,
-        ids: ['item1', 'item2'],
-        embeddings: ['embedding1', 'embedding2'],
-        metadatas: ['metadata1', 'metadata2'],
-        documents: ['document1', 'document2']
+        ids: [
+            'item1',
+            'item2',
+        ],
+        documents: [
+            'text for item 1',
+            'text for item 2',
+        ],
     );
 
     // Delete items
@@ -156,78 +281,15 @@ it('deletes items correctly', function () {
         collectionId: $collectionId,
         ids: ['item1', 'item2']
     );
-    expect($deleteItemsResponse->ok())->toBeTrue();
+
+    expect($deleteItemsResponse->ok())->toBeTrue()
+        ->and($deleteItemsResponse->json())->toHaveCount(2)
+        ->and($deleteItemsResponse->json())->toEqual([
+            'item1',
+            'item2',
+        ]);
 
     // Count items after delete
-    $countAfterDeleteResponse = $this->chromadb->items()->count(collectionId: $collectionId);
-    expect($countAfterDeleteResponse->ok())->toBeTrue();
-    expect($countAfterDeleteResponse->json())->toEqual(0);
-});
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
-    expect($collectionCreate->ok())->toBeTrue();
-    $collectionId = $collectionCreate->json('id');
-
-    // Add items
-    $addItemsResponse = $this->chromadb->items()->add(
-        collectionId: $collectionId,
-        ids: ['item1', 'item2'],
-        embeddings: ['embedding1', 'embedding2'],
-        metadatas: ['metadata1', 'metadata2'],
-        documents: ['document1', 'document2']
-    );
-    expect($addItemsResponse->ok())->toBeTrue();
-
-    // Count items
-    $countItemsResponse = $this->chromadb->items()->count(collectionId: $collectionId);
-    expect($countItemsResponse->ok())->toBeTrue();
-    expect($countItemsResponse->json())->toEqual(2);
-
-    // Retrieve items
-    $getItemsResponse = $this->chromadb->items()->get(collectionId: $collectionId);
-    expect($getItemsResponse->ok())->toBeTrue();
-    expect($getItemsResponse->json())->toHaveCount(2);
-
-    // Update items
-    $updateItemsResponse = $this->chromadb->items()->update(
-        collectionId: $collectionId,
-        ids: ['item1'],
-        embeddings: ['updated_embedding1'],
-        metadatas: ['updated_metadata1'],
-        documents: ['updated_document1']
-    );
-    expect($updateItemsResponse->ok())->toBeTrue();
-
-    // Upsert items
-    $upsertItemsResponse = $this->chromadb->items()->upsert(
-        collectionId: $collectionId,
-        ids: ['item3'],
-        embeddings: ['embedding3'],
-        metadatas: ['metadata3'],
-        documents: ['document3']
-    );
-    expect($upsertItemsResponse->ok())->toBeTrue();
-
-    // Query items
-    $queryItemsResponse = $this->chromadb->items()->query(
-        collectionId: $collectionId,
-        queryEmbeddings: ['query_embedding1'],
-        where: ['field' => 'value'],
-        whereDocument: ['field' => 'value'],
-        include: ['embeddings', 'documents', 'metadatas'],
-        nResults: 5
-    );
-    expect($queryItemsResponse->ok())->toBeTrue();
-    expect($queryItemsResponse->json())->toHaveCount(2);
-
-    // Delete items
-    $deleteItemsResponse = $this->chromadb->items()->delete(
-        collectionId: $collectionId,
-        ids: ['item1', 'item2']
-    );
-    expect($deleteItemsResponse->ok())->toBeTrue();
-
-    // Count items after delete
-    $countAfterDeleteResponse = $this->chromadb->items()->count(collectionId: $collectionId);
-    expect($countAfterDeleteResponse->ok())->toBeTrue();
-    expect($countAfterDeleteResponse->json())->toEqual(1);
+    $countAfterDelete = $this->chromadb->items()->count(collectionId: $collectionId);
+    expect($countAfterDelete)->toEqual(0);
 });

@@ -23,10 +23,9 @@ class DeleteItems extends Request implements HasBody
 
     public function __construct(
         protected string $collectionId,
-        protected array $ids = [],
-        protected array $where = [],
-
-        protected array $whereDocument = [],
+        protected ?array $ids = null,
+        protected ?array $where = null,
+        protected ?array $whereDocument = null,
     ) {
     }
 
