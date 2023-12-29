@@ -4,9 +4,9 @@ use HelgeSverre\Chromadb\Chromadb;
 
 beforeEach(function () {
     $this->chromadb = new Chromadb(
-        token: "test-token-chroma-local-dev",
-        host: "http://localhost",
-        port: "8000"
+        token: 'test-token-chroma-local-dev',
+        host: 'http://localhost',
+        port: '8000'
     );
 });
 
