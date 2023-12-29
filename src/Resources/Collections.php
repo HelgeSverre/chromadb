@@ -46,11 +46,15 @@ class Collections extends BaseResource
     public function count(
         ?string $tenant = null,
         ?string $database = null,
-    ): Response {
-        return $this->connector->send(new CountCollections(
+    ): int {
+        $response = $this->connector->send(new CountCollections(
             tenant: $tenant,
             database: $database
         ));
+
+        // The response from this endpoint is not JSON, its just plain text.
+        return (int) $response->body();
+
     }
 
     public function get(

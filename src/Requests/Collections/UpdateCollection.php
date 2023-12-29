@@ -2,14 +2,18 @@
 
 namespace HelgeSverre\Chromadb\Requests\Collections;
 
+use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Traits\Body\HasJsonBody;
 
 /**
  * update_collection
  */
-class UpdateCollection extends Request
+class UpdateCollection extends Request implements HasBody
 {
+    use HasJsonBody;
+
     protected Method $method = Method::PUT;
 
     public function resolveEndpoint(): string
@@ -26,7 +30,7 @@ class UpdateCollection extends Request
     ) {
     }
 
-    public function defaultQuery(): array
+    public function defaultBody(): array
     {
         return array_filter([
             'new_name' => $this->newName,
