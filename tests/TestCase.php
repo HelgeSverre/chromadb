@@ -1,9 +1,9 @@
 <?php
 
-namespace HelgeSverre\Milvus\Tests;
+namespace HelgeSverre\Chromadb\Tests;
 
 use Dotenv\Dotenv;
-use HelgeSverre\Milvus\MilvusServiceProvider;
+use HelgeSverre\Chromadb\ChromadbServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Saloon\Laravel\SaloonServiceProvider;
 use Spatie\LaravelData\LaravelDataServiceProvider;
@@ -14,7 +14,7 @@ class TestCase extends Orchestra
     {
         return [
             SaloonServiceProvider::class,
-            MilvusServiceProvider::class,
+            ChromadbServiceProvider::class,
             LaravelDataServiceProvider::class,
         ];
     }
@@ -26,6 +26,6 @@ class TestCase extends Orchestra
             (Dotenv::createImmutable(dirname(__DIR__), '.env'))->load();
         }
 
-        config()->set('milvus.token', 'root:Milvus');
+        config()->set('chromadb.token', 'test-token-chroma-local-dev');
     }
 }

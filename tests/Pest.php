@@ -1,6 +1,6 @@
 <?php
 
-use HelgeSverre\Milvus\Tests\TestCase;
+use HelgeSverre\Chromadb\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);
 
