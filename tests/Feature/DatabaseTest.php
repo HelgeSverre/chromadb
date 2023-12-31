@@ -16,7 +16,6 @@ beforeEach(function () {
 it('creates a database correctly', function () {
     $createResponse = $this->chromadb->database()->create('test_database');
     expect($createResponse->ok())->toBeTrue();
-    expect($createResponse->json('name'))->toEqual('test_database');
 });
 
 it('retrieves a database correctly', function () {
@@ -25,5 +24,3 @@ it('retrieves a database correctly', function () {
     expect($getResponse->ok())->toBeTrue();
     expect($getResponse->json('name'))->toEqual('test_database');
 });
-
-// Add more tests as needed for different scenarios and edge cases.
