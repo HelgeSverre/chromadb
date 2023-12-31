@@ -33,6 +33,7 @@ return [
 
 ## Usage
 
+```php
 // List all collections with optional pagination
 $collections = $chromadb->collections()->list(limit: 10, offset: 0);
 
@@ -71,7 +72,7 @@ $itemCount = $chromadb->items()->count('collection_id');
 
 // Query items in a collection based on embeddings, texts, and other filters
 $queryResponse = $chromadb->items()->query('collection_id', queryEmbeddings: ['query_embedding'], queryTexts: ['query_text'], include: ['embeddings', 'metadatas'], nResults: 10);
-
+```
 
 ## Running ChromaDB in Docker
 
