@@ -111,11 +111,10 @@ $chromadb->items()->count('collection_id');
 
 // Query items in a collection based on embeddings, texts, and other filters
 $chromadb->items()->query(
-    collectionId: 'collection_id',
-    queryEmbeddings: ['query_embedding'],
-    queryTexts: ['query_text'],
-    include: ['embeddings', 'metadatas'],
-    nResults: 10
+    collectionId: 'my_collection',
+    queryEmbeddings: [[0.1, 0.2, 0.3, 0.4]],
+    include: ['embeddings', 'metadatas', 'documents'],
+    nResults: 5
 );
 ```
 
