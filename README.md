@@ -5,7 +5,15 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/chromadb.svg?style=flat-square)](https://packagist.org/packages/helgesverre/chromadb)
 [![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/chromadb.svg?style=flat-square)](https://packagist.org/packages/helgesverre/chromadb)
 
-[ChromaDB](https://github.com/chroma-core/chroma) is an open-source vector database
+[ChromaDB](https://github.com/chroma-core/chroma) is an open-source vector database that allows you to store and query
+vector embeddings. This package provides a PHP client for the ChromaDB API.
+
+> **NOTE:** This is not an official ChromaDB package, and is not affiliated with the ChromaDB project.
+> This Client is based on the available documentation (which is currently limited) and the official SDKs for Python
+> and Node, and some code sleuthing of
+> the [ChromaDB API Source Code](https://github.com/chroma-core/chroma/blob/main/chromadb/api/fastapi.py).
+>
+> Please submit an issue if you find any bugs or inconsistencies.
 
 ## Installation
 
