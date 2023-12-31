@@ -34,19 +34,12 @@ return [
 ## Usage
 
 ```php
-```php
 $chromadb = new \HelgeSverre\Chromadb\Chromadb(
     token: 'test-token-chroma-local-dev',
     host: 'http://localhost',
     port: '8000'
 );
-```
 
-// List all collections with optional pagination
-$chromadb->collections()->list(
-    limit: 10,
-    offset: 0
-);
 
 // Create a new collection with optional metadata
 $chromadb->collections()->create(
