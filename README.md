@@ -62,14 +62,14 @@ $chromadb->collections()->delete(
 
 // Update a collection's name and/or metadata
 $chromadb->collections()->update(
-    collectionId: 'collection_id',
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     newName: 'new_collection_name',
      'updated']
 );
 
 // Add items to a collection with optional embeddings, metadata, and documents
 $chromadb->items()->add(
-    collectionId: 'collection_id',
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
     embeddings: ['embedding1', 'embedding2'],
      'value']],
@@ -78,7 +78,7 @@ $chromadb->items()->add(
 
 // Update items in a collection with new embeddings, metadata, and documents
 $chromadb->items()->update(
-    collectionId: 'collection_id',
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
     embeddings: ['new_embedding1', 'new_embedding2'],
      'new_value']],
@@ -87,7 +87,7 @@ $chromadb->items()->update(
 
 // Upsert items in a collection (insert if not exist, update if exist)
 $chromadb->items()->upsert(
-    collectionId: 'collection_id',
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item'],
     metadatas: [['title' => 'metadata']],
     documents: ['document']
@@ -95,18 +95,20 @@ $chromadb->items()->upsert(
 
 // Retrieve specific items from a collection by their IDs
 $chromadb->items()->get(
-    collectionId: 'collection_id',
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2']
 );
 
 // Delete specific items from a collection by their IDs
 $chromadb->items()->delete(
-    collectionId: 'collection_id',
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2']
 );
 
 // Count the number of items in a collection
-$chromadb->items()->count('collection_id');
+$chromadb->items()->count(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3'
+);
 
 // Query items in a collection based on embeddings, texts, and other filters
 $chromadb->items()->query(
@@ -120,6 +122,8 @@ $chromadb->items()->query(
 ## Example: Semantic Search with ChromaDB and OpenAI Embeddings
 
 This example demonstrates how to perform a semantic search in ChromaDB using embeddings generated from OpenAI.
+
+Full code available in [SemanticSearchTest.php](./tests/Feature/SemanticSearchTest.php).
 
 ### Prepare Your Data
 
@@ -164,9 +168,11 @@ foreach ($embeddingsResponse->embeddings as $embedding) {
 Create a collection in ChromaDB to store your blog post embeddings.
 
 ```php
-$chromadb->collections()->create(
+$createCollectionResponse = $chromadb->collections()->create(
     name: 'blog_posts',
 );
+
+$collectionId = $createCollectionResponse->json('id');
 ```
 
 ### Insert into ChromaDB
@@ -176,7 +182,7 @@ Insert these embeddings, along with other blog post data, into your ChromaDB col
 ```php
 foreach ($blogPosts as $post) {
     $chromadb->items()->add(
-        collectionId: 'blog_posts',
+        collectionId: $collectionId,
         ids: [$post['title']],
         embeddings: [$post['embedding']],
         metadatas: [$post]
@@ -198,7 +204,7 @@ Use the ChromaDB client to perform a search with the generated embedding.
 
 ```php
 $searchResponse = $chromadb->items()->query(
-    collectionId: 'blog_posts',
+    collectionId: $collectionId,
     queryEmbeddings: [$searchEmbedding],
     nResults: 3,
     include: ['metadatas']
