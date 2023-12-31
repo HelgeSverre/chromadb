@@ -11,6 +11,6 @@ class Chromadb extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \HelgeSverre\Milvus\Milvus::class;
+        return \HelgeSverre\Chromadb\Chromadb::class;
     }
 }
