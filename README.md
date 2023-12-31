@@ -48,11 +48,9 @@ $chromadb = new \HelgeSverre\Chromadb\Chromadb(
     port: '8000'
 );
 
-
 // Create a new collection with optional metadata
 $chromadb->collections()->create(
     name: 'my_collection',
-     'generic']
 );
 
 // Count the number of collections
@@ -72,7 +70,6 @@ $chromadb->collections()->delete(
 $chromadb->collections()->update(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     newName: 'new_collection_name',
-     'updated']
 );
 
 // Add items to a collection with optional embeddings, metadata, and documents
@@ -80,7 +77,6 @@ $chromadb->items()->add(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
     embeddings: ['embedding1', 'embedding2'],
-     'value']],
     documents: ['doc1', 'doc2']
 );
 
@@ -89,7 +85,6 @@ $chromadb->items()->update(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
     embeddings: ['new_embedding1', 'new_embedding2'],
-     'new_value']],
     documents: ['new_doc1', 'new_doc2']
 );
 
@@ -120,11 +115,12 @@ $chromadb->items()->count(
 
 // Query items in a collection based on embeddings, texts, and other filters
 $chromadb->items()->query(
-    collectionId: $collectionId,
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     queryEmbeddings: [createTestVector(0.8)],
     include: ['documents', 'metadatas', 'distances'],
     nResults: 5
 );
+
 ```
 
 ## Example: Semantic Search with ChromaDB and OpenAI Embeddings
