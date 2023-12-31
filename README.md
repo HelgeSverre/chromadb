@@ -228,15 +228,26 @@ To quickly get started with ChromaDB, you can run it in Docker
 
 ```bash
 # Download the docker-compose.yml file
-wget https://raw.githubusercontent.com/chroma-core/chroma/47447b6f9846fb63cc17d3f458df405387f46127/docker-compose.yml
+wget https://github.com/HelgeSverre/chromadb/blob/main/docker-compose.yml
 
 # Start ChromaDB
 docker compose up -d
 ```
 
+The auth token is set to `test-token-chroma-local-dev` by default.
+
+You can change this in the `docker-compose.yml` file by changing the `CHROMA_SERVER_AUTH_CREDENTIALS` environment
+variable
+
 To stop ChromaDB, run `docker compose down`, to wipe all the data, run `docker compose down -v`.
 
-Go to the ChromaDB [deployment documentation](https://docs.trychroma.com/deployment) for more information.
+> **NOTE** 
+> 
+> The `docker-compose.yml` file in this repo is provided only as an example and should not be used in
+> production.
+> 
+> Go to the ChromaDB [deployment documentation](https://docs.trychroma.com/deployment) for more information on deploying
+> Chroma in production.
 
 ## Testing
 
