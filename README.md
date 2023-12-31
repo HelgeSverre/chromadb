@@ -35,81 +35,81 @@ return [
 
 ```php
 // List all collections with optional pagination
-$collections = $chromadb->collections()->list(
+$chromadb->collections()->list(
     limit: 10,
     offset: 0
 );
 
 // Create a new collection with optional metadata
-$createResponse = $chromadb->collections()->create(
+$chromadb->collections()->create(
     name: 'my_collection',
-    metadata: ['type' => 'generic']
+     'generic']
 );
 
 // Count the number of collections
-$count = $chromadb->collections()->count();
+$chromadb->collections()->count();
 
 // Retrieve a specific collection by name
-$collection = $chromadb->collections()->get(
+$chromadb->collections()->get(
     collectionName: 'my_collection'
 );
 
 // Delete a collection by name
-$deleteResponse = $chromadb->collections()->delete(
+$chromadb->collections()->delete(
     collectionName: 'my_collection'
 );
 
 // Update a collection's name and/or metadata
-$updateResponse = $chromadb->collections()->update(
+$chromadb->collections()->update(
     collectionId: 'collection_id',
     newName: 'new_collection_name',
-    newMetadata: ['type' => 'updated']
+     'updated']
 );
 
 // Add items to a collection with optional embeddings, metadata, and documents
-$addItemsResponse = $chromadb->items()->add(
+$chromadb->items()->add(
     collectionId: 'collection_id',
     ids: ['item1', 'item2'],
     embeddings: ['embedding1', 'embedding2'],
-    metadatas: [['key' => 'value']],
+     'value']],
     documents: ['doc1', 'doc2']
 );
 
 // Update items in a collection with new embeddings, metadata, and documents
-$updateItemsResponse = $chromadb->items()->update(
+$chromadb->items()->update(
     collectionId: 'collection_id',
     ids: ['item1', 'item2'],
     embeddings: ['new_embedding1', 'new_embedding2'],
-    metadatas: [['key' => 'new_value']],
+     'new_value']],
     documents: ['new_doc1', 'new_doc2']
 );
 
 // Upsert items in a collection (insert if not exist, update if exist)
-$upsertItemsResponse = $chromadb->items()->upsert(
+$chromadb->items()->upsert(
     collectionId: 'collection_id',
     ids: ['item1', 'item2'],
     embeddings: ['upsert_embedding1', 'upsert_embedding2'],
-    metadatas: [['key' => 'upsert_value']],
+     'upsert_value']],
     documents: ['upsert_doc1', 'upsert_doc2']
 );
 
 // Retrieve specific items from a collection by their IDs
-$items = $chromadb->items()->get(
+$chromadb->items()->get(
     collectionId: 'collection_id',
     ids: ['item1', 'item2']
 );
 
 // Delete specific items from a collection by their IDs
-$deleteItemsResponse = $chromadb->items()->delete(
+$chromadb->items()->delete(
     collectionId: 'collection_id',
     ids: ['item1', 'item2']
 );
 
 // Count the number of items in a collection
-$itemCount = $chromadb->items()->count('collection_id');
+$chromadb->items()->count('collection_id');
 
 // Query items in a collection based on embeddings, texts, and other filters
-$queryResponse = $chromadb->items()->query(
+$chromadb->items()->query(
     collectionId: 'collection_id',
     queryEmbeddings: ['query_embedding'],
     queryTexts: ['query_text'],
