@@ -119,17 +119,17 @@ $chromadb->items()->query(
 
 ## Running ChromaDB in Docker
 
-To quickly get started with Chromadb, you can run it in Docker
+To quickly get started with ChromaDB, you can run it in Docker
 
 ```bash
 # Download the docker-compose.yml file
 wget https://raw.githubusercontent.com/chroma-core/chroma/47447b6f9846fb63cc17d3f458df405387f46127/docker-compose.yml
 
-# Start Chroma
+# Start ChromaDB
 docker compose up -d
 ```
 
-To stop Chromadb, run `docker compose down`, to wipe all the data, run `docker compose down -v`.
+To stop ChromaDB, run `docker compose down`, to wipe all the data, run `docker compose down -v`.
 
 Go to the ChromaDB [deployment documentation](https://docs.trychroma.com/deployment) for more information.
 
