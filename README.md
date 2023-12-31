@@ -8,13 +8,6 @@
 [ChromaDB](https://github.com/chroma-core/chroma) is an open-source vector database that allows you to store and query
 vector embeddings. This package provides a PHP client for the ChromaDB API.
 
-> **NOTE:** This is not an official ChromaDB package, and is not affiliated with the ChromaDB project.
-> This Client is based on the available documentation (which is currently limited) and the official SDKs for Python
-> and Node, and some code sleuthing of
-> the [ChromaDB API Source Code](https://github.com/chroma-core/chroma/blob/main/chromadb/api/fastapi.py).
->
-> Please submit an issue if you find any bugs or inconsistencies.
-
 ## Installation
 
 You can install the package via composer:
@@ -241,11 +234,11 @@ variable
 
 To stop ChromaDB, run `docker compose down`, to wipe all the data, run `docker compose down -v`.
 
-> **NOTE** 
-> 
+> **NOTE**
+>
 > The `docker-compose.yml` file in this repo is provided only as an example and should not be used in
 > production.
-> 
+>
 > Go to the ChromaDB [deployment documentation](https://docs.trychroma.com/deployment) for more information on deploying
 > Chroma in production.
 
