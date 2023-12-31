@@ -33,99 +33,6 @@ return [
 
 ## Usage
 
-## Example: Semantic Search with ChromaDB and OpenAI Embeddings
-
-This example demonstrates how to perform a semantic search in ChromaDB using embeddings generated from OpenAI.
-
-### Prepare Your Data
-
-First, create an array of data you wish to index. In this example, we'll use blog posts with titles, summaries, and
-tags.
-
-```php
-$blogPosts = [
-    [
-        'title' => 'Exploring Laravel',
-        'summary' => 'A deep dive into Laravel frameworks...',
-        'tags' => ['PHP', 'Laravel', 'Web Development']
-    ],
-    [
-        'title' => 'Introduction to React',
-        'summary' => 'Understanding the basics of React and how it revolutionizes frontend development.',
-        'tags' => ['JavaScript', 'React', 'Frontend']
-    ],
-    // ... more blog posts
-];
-```
-
-### Generate Embeddings
-
-Use OpenAI's embeddings API to convert the summaries of your blog posts into vector embeddings.
-
-```php
-// Assuming you have a function to interact with OpenAI's API
-$embeddings = getOpenAIEmbeddings($blogPosts);
-
-foreach ($embeddings as $index => $embedding) {
-    $blogPosts[$index]['embedding'] = $embedding;
-}
-```
-
-### Create ChromaDB Collection
-
-Create a collection in ChromaDB to store your blog post embeddings.
-
-```php
-$chromadb->collections()->create(
-    name: 'blog_posts',
-    metadata: ['embedding_dimension' => 1536] // Assuming OpenAI embeddings have 1536 dimensions
-);
-```
-
-### Insert into ChromaDB
-
-Insert these embeddings, along with other blog post data, into your ChromaDB collection.
-
-```php
-foreach ($blogPosts as $post) {
-    $chromadb->items()->add(
-        collectionId: 'blog_posts',
-        ids: [$post['title']],
-        embeddings: [$post['embedding']],
-        metadatas: [$post]
-    );
-}
-```
-
-### Creating a Search Vector with OpenAI
-
-Generate a search vector for your query, akin to how you processed the blog posts.
-
-```php
-$searchEmbedding = getOpenAIEmbedding('laravel framework');
-```
-
-### Searching using the Embedding in ChromaDB
-
-Use the ChromaDB client to perform a search with the generated embedding.
-
-```php
-$searchResponse = $chromadb->items()->query(
-    collectionId: 'blog_posts',
-    queryEmbeddings: [$searchEmbedding],
-    nResults: 3,
-    include: ['metadatas']
-);
-
-// Output the search results
-foreach ($searchResponse->json('results') as $result) {
-    echo "Title: " . $result['metadatas']['title'] . "\n";
-    echo "Summary: " . $result['metadatas']['summary'] . "\n";
-    echo "Tags: " . implode(', ', $result['metadatas']['tags']) . "\n\n";
-}
-```
-
-## Running ChromaDB in Docker
 ```php
 $chromadb = new \HelgeSverre\Chromadb\Chromadb(
     token: 'test-token-chroma-local-dev',
@@ -208,6 +115,101 @@ $chromadb->items()->query(
     include: ['documents', 'metadatas', 'distances'],
     nResults: 5
 );
+```
+
+## Example: Semantic Search with ChromaDB and OpenAI Embeddings
+
+This example demonstrates how to perform a semantic search in ChromaDB using embeddings generated from OpenAI.
+
+### Prepare Your Data
+
+First, create an array of data you wish to index. In this example, we'll use blog posts with titles, summaries, and
+tags.
+
+```php
+$blogPosts = [
+    [
+        'title' => 'Exploring Laravel',
+        'summary' => 'A deep dive into Laravel frameworks...',
+        'tags' => ['PHP', 'Laravel', 'Web Development']
+    ],
+    [
+        'title' => 'Introduction to React',
+        'summary' => 'Understanding the basics of React and how it revolutionizes frontend development.',
+        'tags' => ['JavaScript', 'React', 'Frontend']
+    ],
+];
+```
+
+### Generate Embeddings
+
+Use OpenAI's embeddings API to convert the summaries of your blog posts into vector embeddings.
+
+```php
+$summaries = array_column($blogPosts, 'summary');
+$embeddingsResponse = OpenAI::client('sk-your-openai-api-key')
+    ->embeddings()
+    ->create([
+        'model' => 'text-embedding-ada-002',
+        'input' => $summaries,
+    ]);
+
+foreach ($embeddingsResponse->embeddings as $embedding) {
+    $blogPosts[$embedding->index]['vector'] = $embedding->embedding;
+}
+```
+
+### Create ChromaDB Collection
+
+Create a collection in ChromaDB to store your blog post embeddings.
+
+```php
+$chromadb->collections()->create(
+    name: 'blog_posts',
+);
+```
+
+### Insert into ChromaDB
+
+Insert these embeddings, along with other blog post data, into your ChromaDB collection.
+
+```php
+foreach ($blogPosts as $post) {
+    $chromadb->items()->add(
+        collectionId: 'blog_posts',
+        ids: [$post['title']],
+        embeddings: [$post['embedding']],
+        metadatas: [$post]
+    );
+}
+```
+
+### Creating a Search Vector with OpenAI
+
+Generate a search vector for your query, akin to how you processed the blog posts.
+
+```php
+$searchEmbedding = getOpenAIEmbedding('laravel framework');
+```
+
+### Searching using the Embedding in ChromaDB
+
+Use the ChromaDB client to perform a search with the generated embedding.
+
+```php
+$searchResponse = $chromadb->items()->query(
+    collectionId: 'blog_posts',
+    queryEmbeddings: [$searchEmbedding],
+    nResults: 3,
+    include: ['metadatas']
+);
+
+// Output the search results
+foreach ($searchResponse->json('results') as $result) {
+    echo "Title: " . $result['metadatas']['title'] . "\n";
+    echo "Summary: " . $result['metadatas']['summary'] . "\n";
+    echo "Tags: " . implode(', ', $result['metadatas']['tags']) . "\n\n";
+}
 ```
 
 ## Running ChromaDB in Docker
