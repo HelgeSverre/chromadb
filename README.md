@@ -88,10 +88,9 @@ $chromadb->items()->update(
 // Upsert items in a collection (insert if not exist, update if exist)
 $chromadb->items()->upsert(
     collectionId: 'collection_id',
-    ids: ['item1', 'item2'],
-    embeddings: ['upsert_embedding1', 'upsert_embedding2'],
-     'upsert_value']],
-    documents: ['upsert_doc1', 'upsert_doc2']
+    ids: ['item'],
+    metadatas: [['title' => 'metadata']],
+    documents: ['document']
 );
 
 // Retrieve specific items from a collection by their IDs
@@ -111,9 +110,9 @@ $chromadb->items()->count('collection_id');
 
 // Query items in a collection based on embeddings, texts, and other filters
 $chromadb->items()->query(
-    collectionId: 'my_collection',
-    queryEmbeddings: [[0.1, 0.2, 0.3, 0.4]],
-    include: ['embeddings', 'metadatas', 'documents'],
+    collectionId: $collectionId,
+    queryEmbeddings: [createTestVector(0.8)],
+    include: ['documents', 'metadatas', 'distances'],
     nResults: 5
 );
 ```
@@ -126,12 +125,9 @@ To quickly get started with Chromadb, you can run it in Docker
 # Download the docker-compose.yml file
 wget https://raw.githubusercontent.com/chroma-core/chroma/47447b6f9846fb63cc17d3f458df405387f46127/docker-compose.yml
 
-# Start Milvus
+# Start Chroma
 docker compose up -d
 ```
-
-A healthcheck endpoint will now be available on `http://localhost:9091/healthz`, and the Milvus API will be available
-on `http://localhost:19530`.
 
 To stop Chromadb, run `docker compose down`, to wipe all the data, run `docker compose down -v`.
 
