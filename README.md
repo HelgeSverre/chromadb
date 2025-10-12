@@ -46,7 +46,7 @@ This is the contents of the published `config/chromadb.php` file:
 ```php
 return [
     'token' => env('CHROMADB_TOKEN'),
-    'host' => env('CHROMADB_HOST', 'localhost'),
+    'host' => env('CHROMADB_HOST', 'http://localhost'),
     'port' => env('CHROMADB_PORT', '8000'),
 
     'tenant' => env('CHROMADB_TENANT', 'default_tenant'),
@@ -55,14 +55,67 @@ return [
     'embeddings' => [
         'default' => env('CHROMADB_EMBEDDING_PROVIDER', 'openai'),
         'providers' => [
-            'openai' => [...],
-            'voyage' => [...],
-            'mistral' => [...],
-            'jina' => [...],
-            'ollama' => [...],
+            'openai' => [
+                'api_key' => env('OPENAI_API_KEY'),
+                'model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
+            ],
+            'voyage' => [
+                'api_key' => env('VOYAGE_API_KEY'),
+                'model' => env('VOYAGE_EMBEDDING_MODEL', 'voyage-3.5'),
+            ],
+            'mistral' => [
+                'api_key' => env('MISTRAL_API_KEY'),
+                'model' => env('MISTRAL_EMBEDDING_MODEL', 'mistral-embed'),
+            ],
+            'jina' => [
+                'api_key' => env('JINA_API_KEY'),
+                'model' => env('JINA_EMBEDDING_MODEL', 'jina-embeddings-v3'),
+            ],
+            'ollama' => [
+                'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
+                'model' => env('OLLAMA_EMBEDDING_MODEL', 'all-minilm'),
+            ],
         ],
     ],
 ];
+```
+
+### Environment Variables
+
+Add these variables to your `.env` file:
+
+```env
+# ChromaDB Connection
+CHROMADB_TOKEN=test-token-chroma-local-dev
+CHROMADB_HOST=http://localhost
+CHROMADB_PORT=8000
+
+# Multi-tenancy (optional)
+CHROMADB_TENANT=default_tenant
+CHROMADB_DATABASE=default_database
+
+# Embedding Provider (optional)
+CHROMADB_EMBEDDING_PROVIDER=openai
+
+# OpenAI Configuration (if using OpenAI embeddings)
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+
+# Voyage AI Configuration (if using Voyage embeddings)
+VOYAGE_API_KEY=your-voyage-api-key
+VOYAGE_EMBEDDING_MODEL=voyage-3.5
+
+# Mistral AI Configuration (if using Mistral embeddings)
+MISTRAL_API_KEY=your-mistral-api-key
+MISTRAL_EMBEDDING_MODEL=mistral-embed
+
+# Jina AI Configuration (if using Jina embeddings)
+JINA_API_KEY=your-jina-api-key
+JINA_EMBEDDING_MODEL=jina-embeddings-v3
+
+# Ollama Configuration (if using local Ollama embeddings)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_EMBEDDING_MODEL=all-minilm
 ```
 
 ## Quick Start
@@ -124,17 +177,32 @@ $chromadb->collections()->delete(
 $chromadb->collections()->update(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     newName: 'new_collection_name',
+    newMetadata: ['updated' => 'true']
+);
+
+// List all collections
+$collections = $chromadb->collections()->list();
+
+// Fork a collection (create a copy)
+$chromadb->collections()->fork(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    newName: 'my_collection_copy'
+);
+
+// Get collection by CRN (Collection Resource Name)
+$chromadb->collections()->getByCrn(
+    crn: 'crn:chroma:collection:default_tenant:default_database:3ea5a914-e2ab-47cb-b285-8e585c9af4f3'
 );
 ```
 
 ### Items
 
 ```php
-// Add items to a collection with optional embeddings, metadata, and documents
+// Add items to a collection with embeddings, metadata, and documents
 $chromadb->items()->add(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
-    embeddings: ['embedding1', 'embedding2'],
+    embeddings: [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]],
     documents: ['doc1', 'doc2']
 );
 
@@ -142,7 +210,7 @@ $chromadb->items()->add(
 $chromadb->items()->update(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
-    embeddings: ['new_embedding1', 'new_embedding2'],
+    embeddings: [[0.7, 0.8, 0.9], [1.0, 1.1, 1.2]],
     documents: ['new_doc1', 'new_doc2']
 );
 
@@ -150,6 +218,7 @@ $chromadb->items()->update(
 $chromadb->items()->upsert(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item'],
+    embeddings: [[0.5, 0.6, 0.7]],
     metadatas: [['title' => 'metadata']],
     documents: ['document']
 );
@@ -174,7 +243,7 @@ $chromadb->items()->count(
 // Query items in a collection based on embeddings, texts, and other filters
 $chromadb->items()->query(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
-    queryEmbeddings: [createTestVector(0.8)],
+    queryEmbeddings: [[0.8, 0.8, 0.8]],
     include: ['documents', 'metadatas', 'distances'],
     nResults: 5
 );
@@ -207,9 +276,9 @@ This package includes built-in support for automatic embedding generation using 
 ### Supported Providers
 
 - **OpenAI** - `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002`
-- **Voyage AI** - `voyage-3`, `voyage-3-lite`, `voyage-code-3`
+- **Voyage AI** - `voyage-3.5` (default), `voyage-3-large`, `voyage-code-3`, `voyage-finance-2`, `voyage-law-2`
 - **Mistral AI** - `mistral-embed`
-- **Jina AI** - `jina-embeddings-v3`, `jina-colbert-v2`
+- **Jina AI** - `jina-embeddings-v3`, `jina-embeddings-v2-base-en`, `jina-embeddings-v2-small-en`, `jina-clip-v2`
 - **Ollama** - Local embeddings with any Ollama model
 
 ### Configuration
@@ -227,19 +296,23 @@ OPENAI_EMBEDDING_MODEL=text-embedding-3-small
 When you add items with documents but without embeddings, the configured provider will automatically generate them:
 
 ```php
-use HelgeSverre\Chromadb\Embeddings\EmbeddingFactory;
+use HelgeSverre\Chromadb\Embeddings\Embeddings;
 
-$embedder = EmbeddingFactory::create('openai', [
-    'api_key' => config('chromadb.embeddings.providers.openai.api_key'),
-    'model' => 'text-embedding-3-small',
-]);
+// Create embedder from config
+$embedder = Embeddings::fromConfig('openai');
+
+// Or create directly with parameters
+$embedder = Embeddings::openai(
+    apiKey: config('chromadb.embeddings.providers.openai.api_key'),
+    model: 'text-embedding-3-small'
+);
 
 $documents = [
     'The quick brown fox jumps over the lazy dog',
     'Laravel is a web application framework with expressive, elegant syntax',
 ];
 
-$embeddings = $embedder->embed($documents);
+$embeddings = $embedder->generate($documents);
 
 $chromadb->items()->add(
     collectionId: $collectionId,
@@ -286,12 +359,12 @@ $blogPosts = [
     [
         'title' => 'Exploring Laravel',
         'summary' => 'A deep dive into Laravel frameworks...',
-        'tags' => ['PHP', 'Laravel', 'Web Development']
+        'tags' => 'PHP, Laravel, Web Development'
     ],
     [
         'title' => 'Introduction to React',
         'summary' => 'Understanding the basics of React and how it revolutionizes frontend development.',
-        'tags' => ['JavaScript', 'React', 'Frontend']
+        'tags' => 'JavaScript, React, Frontend'
     ],
 ];
 ```
@@ -332,10 +405,14 @@ Insert these embeddings, along with other blog post data, into your ChromaDB col
 
 ```php
 foreach ($blogPosts as $post) {
+    // Extract embedding from post (v2 API metadata cannot contain arrays)
+    $embedding = $post['vector'];
+    unset($post['vector']); // Remove from metadata
+
     $chromadb->items()->add(
         collectionId: $collectionId,
         ids: [$post['title']],
-        embeddings: [$post['embedding']],
+        embeddings: [$embedding],
         metadatas: [$post]
     );
 }
@@ -346,7 +423,14 @@ foreach ($blogPosts as $post) {
 Generate a search vector for your query, akin to how you processed the blog posts.
 
 ```php
-$searchEmbedding = getOpenAIEmbedding('laravel framework');
+$searchResponse = OpenAI::client('sk-your-openai-api-key')
+    ->embeddings()
+    ->create([
+        'model' => 'text-embedding-ada-002',
+        'input' => 'laravel framework',
+    ]);
+
+$searchEmbedding = $searchResponse->embeddings[0]->embedding;
 ```
 
 ### Searching using the Embedding in ChromaDB
@@ -362,10 +446,13 @@ $searchResponse = $chromadb->items()->query(
 );
 
 // Output the search results
-foreach ($searchResponse->json('results') as $result) {
-    echo "Title: " . $result['metadatas']['title'] . "\n";
-    echo "Summary: " . $result['metadatas']['summary'] . "\n";
-    echo "Tags: " . implode(', ', $result['metadatas']['tags']) . "\n\n";
+$metadatas = $searchResponse->json('metadatas.0');
+$ids = $searchResponse->json('ids.0');
+
+foreach ($metadatas as $index => $metadata) {
+    echo "Title: " . $metadata['title'] . "\n";
+    echo "Summary: " . $metadata['summary'] . "\n";
+    echo "Tags: " . $metadata['tags'] . "\n\n";
 }
 ```
 

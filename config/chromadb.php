@@ -8,7 +8,7 @@ return [
     */
 
     'token' => env('CHROMADB_TOKEN'),
-    'host' => env('CHROMADB_HOST', 'localhost'),
+    'host' => env('CHROMADB_HOST', 'http://localhost'),
     'port' => env('CHROMADB_PORT', '8000'),
 
     /*
