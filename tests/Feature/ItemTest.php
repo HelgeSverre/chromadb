@@ -9,22 +9,26 @@ beforeEach(function () {
         port: '8000'
     );
 
-    // Reset the server before each test
+    // Explicit reset for ItemTest to ensure clean state
     $this->chromadb->server()->reset();
 });
 
 it('adds items with ids and metadatas  correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
 
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $addItemsResponse = $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: [
             'item1',
             'item2',
+        ],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.2),
         ],
         metadatas: [
             ['title' => 'metadata1'],
@@ -37,7 +41,7 @@ it('adds items with ids and metadatas  correctly', function () {
 });
 
 it('adds items with ids, documents and embeddings correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
 
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
@@ -64,17 +68,21 @@ it('adds items with ids, documents and embeddings correctly', function () {
 });
 
 it('adds items with ids and documents correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
 
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $addItemsResponse = $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: [
             'item1',
             'item2',
+        ],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.2),
         ],
         documents: [
             'text for item 1',
@@ -87,17 +95,21 @@ it('adds items with ids and documents correctly', function () {
 });
 
 it('adds items with ids, metadata and documents correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
 
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $addItemsResponse = $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: [
             'item1',
             'item2',
+        ],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.2),
         ],
         metadatas: [
             ['title' => 'metadata1'],
@@ -114,14 +126,15 @@ it('adds items with ids, metadata and documents correctly', function () {
 });
 
 it('counts items correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: ['item1'],
+        embeddings: [createTestVector(0.1)],
         metadatas: [['title' => 'metadata1']],
         documents: ['document1']
     );
@@ -131,10 +144,11 @@ it('counts items correctly', function () {
 
     expect($itemCount)->toEqual(1);
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: ['item2'],
+        embeddings: [createTestVector(0.2)],
         metadatas: [['title' => 'metadata2']],
         documents: ['document2']
     );
@@ -146,14 +160,19 @@ it('counts items correctly', function () {
 });
 
 it('retrieves items correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $res = $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: ['item1', 'item2', 'item3'],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.2),
+            createTestVector(0.3),
+        ],
         documents: ['document1', 'document2', 'document3']
     );
 
@@ -178,15 +197,16 @@ it('retrieves items correctly', function () {
 });
 
 it('updates items with ids, documents and metadatas correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
 
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: ['item'],
+        embeddings: [createTestVector(0.1)],
         metadatas: [['title' => 'metadata']],
         documents: ['document']
     );
@@ -203,15 +223,16 @@ it('updates items with ids, documents and metadatas correctly', function () {
 });
 
 it('updates documents with ids, embeddings and metadatas correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
 
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: ['item'],
+        embeddings: [createTestVector(0.1)],
         metadatas: [['title' => 'metadata']],
         documents: ['document']
     );
@@ -228,14 +249,15 @@ it('updates documents with ids, embeddings and metadatas correctly', function ()
 });
 
 it('upserts items correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Upsert items
+    // Upsert items (v2 API requires embeddings)
     $upsertItemsResponse = $this->chromadb->items()->upsert(
         collectionId: $collectionId,
         ids: ['item'],
+        embeddings: [createTestVector(0.1)],
         metadatas: [['title' => 'metadata']],
         documents: ['document']
     );
@@ -244,7 +266,7 @@ it('upserts items correctly', function () {
 });
 
 it('queries items correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
@@ -278,16 +300,20 @@ it('queries items correctly', function () {
 });
 
 it('deletes items correctly', function () {
-    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items');
+    $collectionCreate = $this->chromadb->collections()->create('test_collection_for_items', getOrCreate: true);
     expect($collectionCreate->ok())->toBeTrue();
     $collectionId = $collectionCreate->json('id');
 
-    // Add items
+    // Add items (v2 API requires embeddings)
     $this->chromadb->items()->add(
         collectionId: $collectionId,
         ids: [
             'item1',
             'item2',
+        ],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.2),
         ],
         documents: [
             'text for item 1',
@@ -301,14 +327,11 @@ it('deletes items correctly', function () {
         ids: ['item1', 'item2']
     );
 
+    // In v2 API, delete returns an empty array
     expect($deleteItemsResponse->ok())->toBeTrue()
-        ->and($deleteItemsResponse->json())->toHaveCount(2)
-        ->and($deleteItemsResponse->json())->toEqual([
-            'item1',
-            'item2',
-        ]);
+        ->and($deleteItemsResponse->json())->toEqual([]);
 
-    // Count items after delete
+    // Verify deletion by counting
     $countAfterDelete = $this->chromadb->items()->count(collectionId: $collectionId);
     expect($countAfterDelete)->toEqual(0);
 });

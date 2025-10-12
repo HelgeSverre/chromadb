@@ -9,12 +9,14 @@ beforeEach(function () {
         port: '8000'
     );
 
-    // Reset the server before each test
     $this->chromadb->server()->reset();
 });
 
 it('creates a database correctly', function () {
     $createResponse = $this->chromadb->database()->create('test_database');
+
+    ray($createResponse->json());
+
     expect($createResponse->ok())->toBeTrue();
 });
 

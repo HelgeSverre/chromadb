@@ -9,13 +9,12 @@ beforeEach(function () {
         port: '8000'
     );
 
-    // Reset the server before each test
     $this->chromadb->server()->reset();
 });
 
 it('counts collections correctly', function () {
     $initialCount = $this->chromadb->collections()->count();
-    $this->chromadb->collections()->create('test_collection_for_count');
+    $this->chromadb->collections()->create('test_collection_for_count', getOrCreate: true);
     $countAfterCreate = $this->chromadb->collections()->count();
     expect($countAfterCreate)->toEqual($initialCount + 1);
 
@@ -25,7 +24,7 @@ it('counts collections correctly', function () {
 });
 
 it('retrieves a collection correctly', function () {
-    $create = $this->chromadb->collections()->create('test_collection_for_retrieve');
+    $create = $this->chromadb->collections()->create('test_collection_for_retrieve', getOrCreate: true);
     expect($create->ok())->toBeTrue();
 
     $get = $this->chromadb->collections()->get('test_collection_for_retrieve');
@@ -35,7 +34,7 @@ it('retrieves a collection correctly', function () {
 });
 
 it('lists collections correctly', function () {
-    $create = $this->chromadb->collections()->create('test_collection_for_list');
+    $create = $this->chromadb->collections()->create('test_collection_for_list', getOrCreate: true);
     expect($create->ok())->toBeTrue();
 
     $list = $this->chromadb->collections()->list();
@@ -43,7 +42,7 @@ it('lists collections correctly', function () {
 });
 
 it('updates a collection metadata correctly', function () {
-    $create = $this->chromadb->collections()->create('test_collection_for_update');
+    $create = $this->chromadb->collections()->create('test_collection_for_update', getOrCreate: true);
     expect($create->ok())->toBeTrue();
 
     $update = $this->chromadb->collections()->update(
@@ -60,7 +59,7 @@ it('updates a collection metadata correctly', function () {
 });
 
 it('updates a collection name correctly', function () {
-    $create = $this->chromadb->collections()->create('test_collection_for_update');
+    $create = $this->chromadb->collections()->create('test_collection_for_update', getOrCreate: true);
     expect($create->ok())->toBeTrue();
 
     $update = $this->chromadb->collections()->update(

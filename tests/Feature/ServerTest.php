@@ -8,6 +8,8 @@ beforeEach(function () {
         host: 'http://localhost',
         port: '8000'
     );
+
+    // Note: ServerTest includes a reset test, so we don't reset here
 });
 
 it('can perform a server heartbeat', function () {
@@ -32,5 +34,5 @@ it('can reset the server', function () {
 
 it('can retrieve the server version', function () {
     $version = $this->chromadb->server()->version();
-    expect($version)->toEqual('0.4.21');
+    expect($version)->toEqual('1.0.0');
 });
