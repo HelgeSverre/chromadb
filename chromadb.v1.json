@@ -137,7 +137,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -184,7 +184,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -220,7 +220,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -257,7 +257,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -337,7 +337,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -393,7 +393,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -441,7 +441,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -488,7 +488,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -535,7 +535,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -582,7 +582,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -629,7 +629,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -676,7 +676,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -713,7 +713,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -760,7 +760,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -788,7 +788,8 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "title": "Collection Name","type": "string"
+                            "title": "Collection Name",
+                            "type": "string"
                         }
                     },
                     {
@@ -817,7 +818,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -843,7 +844,8 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "title": "Collection Name","type": "string"
+                            "title": "Collection Name",
+                            "type": "string"
                         }
                     },
                     {
@@ -872,7 +874,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -919,7 +921,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {"type": "object"}
+                                "schema": { "type": "object" }
                             }
                         }
                     },
@@ -1025,9 +1027,7 @@
                     }
                 },
                 "type": "object",
-                "required": [
-                    "ids"
-                ],
+                "required": ["ids"],
                 "title": "AddEmbedding"
             },
             "CreateCollection": {
@@ -1054,9 +1054,7 @@
                     }
                 },
                 "type": "object",
-                "required": [
-                    "name"
-                ],
+                "required": ["name"],
                 "title": "CreateCollection"
             },
             "CreateDatabase": {
@@ -1067,9 +1065,7 @@
                     }
                 },
                 "type": "object",
-                "required": [
-                    "name"
-                ],
+                "required": ["name"],
                 "title": "CreateDatabase"
             },
             "CreateTenant": {
@@ -1080,9 +1076,7 @@
                     }
                 },
                 "type": "object",
-                "required": [
-                    "name"
-                ],
+                "required": ["name"],
                 "title": "CreateTenant"
             },
             "DeleteEmbedding": {
@@ -1223,10 +1217,7 @@
                         },
                         "type": "array",
                         "title": "Include",
-                        "default": [
-                            "metadatas",
-                            "documents"
-                        ]
+                        "default": ["metadatas", "documents"]
                     }
                 },
                 "type": "object",
@@ -1306,17 +1297,11 @@
                         },
                         "type": "array",
                         "title": "Include",
-                        "default": [
-                            "metadatas",
-                            "documents",
-                            "distances"
-                        ]
+                        "default": ["metadatas", "documents", "distances"]
                     }
                 },
                 "type": "object",
-                "required": [
-                    "query_embeddings"
-                ],
+                "required": ["query_embeddings"],
                 "title": "QueryEmbedding"
             },
             "UpdateCollection": {
@@ -1433,9 +1418,7 @@
                     }
                 },
                 "type": "object",
-                "required": [
-                    "ids"
-                ],
+                "required": ["ids"],
                 "title": "UpdateEmbedding"
             },
             "ValidationError": {
@@ -1464,11 +1447,7 @@
                     }
                 },
                 "type": "object",
-                "required": [
-                    "loc",
-                    "msg",
-                    "type"
-                ],
+                "required": ["loc", "msg", "type"],
                 "title": "ValidationError"
             }
         }
