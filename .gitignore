@@ -15,5 +15,8 @@ node_modules
 ## My Playground for stuff
 tests/Feature/RealWorldExampleTest.php
 
+# Old planning documents (archived)
+docs/trash/
+
 # Docker volumns, for testing the package against real service.
 volumes/
