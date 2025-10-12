@@ -14,11 +14,10 @@ class GetTenant extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/tenants/{$this->tenant}";
+        return "/api/v2/tenants/{$this->tenant}";
     }
 
     public function __construct(
         protected string $tenant,
-    ) {
-    }
+    ) {}
 }

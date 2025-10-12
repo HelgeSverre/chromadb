@@ -18,10 +18,8 @@ class Reset extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/reset';
+        return '/api/v2/reset';
     }
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

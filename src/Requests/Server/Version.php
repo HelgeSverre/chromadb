@@ -14,6 +14,6 @@ class Version extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/version';
+        return '/api/v2/version';
     }
 }

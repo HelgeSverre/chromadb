@@ -18,17 +18,19 @@ class UpdateCollection extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}";
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections/{$this->collectionId}";
     }
 
     public function __construct(
         protected string $collectionId,
         protected ?string $newName,
-
-        // TODO: Does not seem to actually work, investigate if the docs lie
         protected ?array $newMetadata,
-    ) {
-    }
+        protected ?string $tenant = null,
+        protected ?string $database = null,
+    ) {}
 
     public function defaultBody(): array
     {

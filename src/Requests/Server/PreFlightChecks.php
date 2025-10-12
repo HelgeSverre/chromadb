@@ -14,10 +14,8 @@ class PreFlightChecks extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/pre-flight-checks';
+        return '/api/v2/pre-flight-checks';
     }
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

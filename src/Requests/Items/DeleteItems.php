@@ -18,7 +18,10 @@ class DeleteItems extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}/delete";
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections/{$this->collectionId}/delete";
     }
 
     public function __construct(
@@ -26,8 +29,9 @@ class DeleteItems extends Request implements HasBody
         protected ?array $ids = null,
         protected ?array $where = null,
         protected ?array $whereDocument = null,
-    ) {
-    }
+        protected ?string $tenant = null,
+        protected ?string $database = null,
+    ) {}
 
     protected function defaultBody(): array
     {

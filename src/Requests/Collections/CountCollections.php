@@ -14,20 +14,14 @@ class CountCollections extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/count_collections';
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections_count";
     }
 
     public function __construct(
         protected ?string $tenant = null,
         protected ?string $database = null,
-    ) {
-    }
-
-    public function defaultQuery(): array
-    {
-        return array_filter([
-            'tenant' => $this->tenant,
-            'database' => $this->database,
-        ]);
-    }
+    ) {}
 }

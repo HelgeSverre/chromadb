@@ -14,19 +14,13 @@ class GetDatabase extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/databases/{$this->name}";
+        $tenant = $this->tenant ?? 'default_tenant';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$this->name}";
     }
 
     public function __construct(
         protected string $name,
         protected ?string $tenant = null,
-    ) {
-    }
-
-    public function defaultQuery(): array
-    {
-        return array_filter([
-            'tenant' => $this->tenant,
-        ]);
-    }
+    ) {}
 }

@@ -11,11 +11,17 @@ class Database extends BaseResource
 {
     public function create(string $name, ?string $tenant = null): Response
     {
-        return $this->connector->send(new CreateDatabase($name, $tenant));
+        return $this->connector->send(new CreateDatabase(
+            $name,
+            $tenant ?? $this->connector->getTenant()
+        ));
     }
 
     public function get(string $database, ?string $tenant = null): Response
     {
-        return $this->connector->send(new GetDatabase($database, $tenant));
+        return $this->connector->send(new GetDatabase(
+            $database,
+            $tenant ?? $this->connector->getTenant()
+        ));
     }
 }

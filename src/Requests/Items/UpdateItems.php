@@ -18,7 +18,10 @@ class UpdateItems extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}/update";
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections/{$this->collectionId}/update";
     }
 
     public function __construct(
@@ -27,8 +30,9 @@ class UpdateItems extends Request implements HasBody
         protected null|array|string $embeddings = null,
         protected null|array|string $metadatas = null,
         protected null|array|string $documents = null,
-    ) {
-    }
+        protected ?string $tenant = null,
+        protected ?string $database = null,
+    ) {}
 
     protected function defaultBody(): array
     {

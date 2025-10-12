@@ -14,21 +14,15 @@ class DeleteCollection extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionName}";
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections/{$this->collectionName}";
     }
 
     public function __construct(
         protected string $collectionName,
         protected ?string $tenant = null,
         protected ?string $database = null,
-    ) {
-    }
-
-    public function defaultQuery(): array
-    {
-        return array_filter([
-            'tenant' => $this->tenant,
-            'database' => $this->database,
-        ]);
-    }
+    ) {}
 }

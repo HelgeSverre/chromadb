@@ -14,11 +14,15 @@ class CountItems extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}/count";
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections/{$this->collectionId}/count";
     }
 
     public function __construct(
         protected string $collectionId,
-    ) {
-    }
+        protected ?string $tenant = null,
+        protected ?string $database = null,
+    ) {}
 }

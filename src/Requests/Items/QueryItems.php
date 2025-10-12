@@ -18,7 +18,10 @@ class QueryItems extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/v1/collections/{$this->collectionId}/query";
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections/{$this->collectionId}/query";
     }
 
     public function __construct(
@@ -29,8 +32,9 @@ class QueryItems extends Request implements HasBody
         protected ?array $whereDocument = null,
         protected ?array $include = null,
         protected ?int $nResults = null,
-    ) {
-    }
+        protected ?string $tenant = null,
+        protected ?string $database = null,
+    ) {}
 
     protected function defaultBody(): array
     {
