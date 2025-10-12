@@ -60,7 +60,6 @@ class VoyageAIEmbeddings implements EmbeddingFunction
             throw EmbeddingException::emptyInput();
         }
 
-        $response = null;
         try {
             $response = $this->client->post('embeddings', [
                 'json' => [

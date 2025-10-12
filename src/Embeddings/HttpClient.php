@@ -21,7 +21,6 @@ class HttpClient
      *
      * @param  array  $config  Guzzle client configuration (base_uri, headers, timeout, etc.)
      * @param  int  $truncateAt  Maximum characters to include in error messages
-     * @return Client
      */
     public static function create(array $config, int $truncateAt = 50_000): Client
     {
