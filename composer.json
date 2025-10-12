@@ -59,7 +59,7 @@
         "test:feature": "vendor/bin/pest --testsuite=Feature",
         "test:integration": "vendor/bin/pest --testsuite=Integration",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint src tests config"
     },
     "config": {
         "sort-packages": true,

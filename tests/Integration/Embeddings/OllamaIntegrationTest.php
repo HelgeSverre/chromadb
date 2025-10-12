@@ -56,7 +56,7 @@ test('will fail if you use an invalid model', function () {
 
     $embeddings = new OllamaEmbeddings('not-real-embedding-model', $this->baseUrl);
 
-    $result = $embeddings->generate(['Hello, world!']);
+    $embeddings->generate(['Hello, world!']);
 })->throws(EmbeddingException::class)->group('integration', 'ollama');
 
 test('can generate multiple embeddings', function () {
