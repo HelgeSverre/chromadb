@@ -8,6 +8,7 @@ use HelgeSverre\Chromadb\Requests\Items\CountItems;
 use HelgeSverre\Chromadb\Requests\Items\DeleteItems;
 use HelgeSverre\Chromadb\Requests\Items\GetItems;
 use HelgeSverre\Chromadb\Requests\Items\QueryItems;
+use HelgeSverre\Chromadb\Requests\Items\SearchItems;
 use HelgeSverre\Chromadb\Requests\Items\UpdateItems;
 use HelgeSverre\Chromadb\Requests\Items\UpsertItems;
 use RuntimeException;
@@ -21,7 +22,8 @@ class Items extends BaseResource
         ?array $ids = null,
         null|array|string $embeddings = null,
         ?array $metadatas = null,
-        null|array|string $documents = null
+        null|array|string $documents = null,
+        ?array $uris = null
     ): Response {
         return $this->connector->send(new AddItems(
             collectionId: $collectionId,
@@ -29,6 +31,7 @@ class Items extends BaseResource
             embeddings: $embeddings,
             metadatas: $metadatas,
             documents: $documents,
+            uris: $uris,
             tenant: $this->connector->getTenant(),
             database: $this->connector->getDatabase()
         ));
@@ -39,7 +42,8 @@ class Items extends BaseResource
         array $ids,
         null|array|string $embeddings = null,
         ?array $metadatas = null,
-        null|array|string $documents = null
+        null|array|string $documents = null,
+        ?array $uris = null
     ): Response {
         return $this->connector->send(new UpdateItems(
             collectionId: $collectionId,
@@ -47,6 +51,7 @@ class Items extends BaseResource
             embeddings: $embeddings,
             metadatas: $metadatas,
             documents: $documents,
+            uris: $uris,
             tenant: $this->connector->getTenant(),
             database: $this->connector->getDatabase()
         ));
@@ -57,7 +62,8 @@ class Items extends BaseResource
         array $ids,
         null|array|string $embeddings = null,
         ?array $metadatas = null,
-        null|array|string $documents = null
+        null|array|string $documents = null,
+        ?array $uris = null
     ): Response {
         return $this->connector->send(new UpsertItems(
             collectionId: $collectionId,
@@ -65,6 +71,7 @@ class Items extends BaseResource
             embeddings: $embeddings,
             metadatas: $metadatas,
             documents: $documents,
+            uris: $uris,
             tenant: $this->connector->getTenant(),
             database: $this->connector->getDatabase()
         ));
@@ -129,6 +136,8 @@ class Items extends BaseResource
         ?array $whereDocument = null,
         ?array $include = null,
         ?int $nResults = null,
+        ?int $limit = null,
+        ?int $offset = null,
     ): Response {
         return $this->connector->send(new QueryItems(
             collectionId: $collectionId,
@@ -138,6 +147,8 @@ class Items extends BaseResource
             whereDocument: $whereDocument,
             include: $include,
             nResults: $nResults,
+            limit: $limit,
+            offset: $offset,
             tenant: $this->connector->getTenant(),
             database: $this->connector->getDatabase()
         ));
@@ -235,5 +246,15 @@ class Items extends BaseResource
             where: $where,
             whereDocument: $whereDocument
         );
+    }
+
+    public function search(string $collectionId, array $searches): Response
+    {
+        return $this->connector->send(new SearchItems(
+            collectionId: $collectionId,
+            searches: $searches,
+            tenant: $this->connector->getTenant(),
+            database: $this->connector->getDatabase()
+        ));
     }
 }

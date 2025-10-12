@@ -335,3 +335,73 @@ it('deletes items correctly', function () {
     $countAfterDelete = $this->chromadb->items()->count(collectionId: $collectionId);
     expect($countAfterDelete)->toEqual(0);
 });
+
+it('performs hybrid search correctly', function () {
+    // NOTE: Search endpoint is not implemented in ChromaDB v1.0.0 (returns 501 Not Implemented)
+    // This test documents the expected behavior for when it becomes available
+
+    // Setup collection with items
+    $collection = $this->chromadb->collections()->create('search_test_collection', getOrCreate: true);
+    $collectionId = $collection->json('id');
+
+    $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: ['item1', 'item2', 'item3'],
+        embeddings: [
+            createTestVector(0.1),
+            createTestVector(0.5),
+            createTestVector(0.9),
+        ],
+        metadatas: [
+            ['category' => 'A'],
+            ['category' => 'B'],
+            ['category' => 'A'],
+        ],
+        documents: ['doc1', 'doc2', 'doc3']
+    );
+
+    // Perform hybrid search with filter and select
+    $response = $this->chromadb->items()->search(
+        collectionId: $collectionId,
+        searches: [[
+            'filter' => [
+                'query_ids' => ['item1', 'item3'],
+            ],
+            'limit' => [
+                'limit' => 10,
+                'offset' => 0,
+            ],
+            'select' => [
+                'keys' => ['Document', 'Metadata'],
+            ],
+        ]]
+    );
+
+    // Search endpoint returns 501 Not Implemented in v1.0.0
+    // When implemented, it should return 200 with search results
+    expect($response->status())->toBeIn([200, 501]);
+})->skip('Search endpoint not implemented in ChromaDB v1.0.0 - returns 501');
+
+it('adds items with uris correctly', function () {
+    $collection = $this->chromadb->collections()->create('test_uris_collection', getOrCreate: true);
+    $collectionId = $collection->json('id');
+
+    $response = $this->chromadb->items()->add(
+        collectionId: $collectionId,
+        ids: ['item1'],
+        embeddings: [createTestVector(0.1)],
+        uris: ['https://example.com/doc1']
+    );
+
+    // Add returns 201 Created, not 200
+    expect($response->status())->toEqual(201);
+
+    $getResponse = $this->chromadb->items()->get(
+        collectionId: $collectionId,
+        ids: ['item1'],
+        include: ['uris']
+    );
+
+    expect($getResponse->ok())->toBeTrue()
+        ->and($getResponse->json('uris'))->toEqual(['https://example.com/doc1']);
+});

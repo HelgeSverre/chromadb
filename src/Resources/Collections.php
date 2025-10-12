@@ -5,7 +5,9 @@ namespace HelgeSverre\Chromadb\Resources;
 use HelgeSverre\Chromadb\Requests\Collections\CountCollections;
 use HelgeSverre\Chromadb\Requests\Collections\CreateCollection;
 use HelgeSverre\Chromadb\Requests\Collections\DeleteCollection;
+use HelgeSverre\Chromadb\Requests\Collections\ForkCollection;
 use HelgeSverre\Chromadb\Requests\Collections\GetCollection;
+use HelgeSverre\Chromadb\Requests\Collections\GetCollectionByCrn;
 use HelgeSverre\Chromadb\Requests\Collections\ListCollections;
 use HelgeSverre\Chromadb\Requests\Collections\UpdateCollection;
 use Saloon\Http\BaseResource;
@@ -88,6 +90,7 @@ class Collections extends BaseResource
         string $collectionId,
         ?string $newName = null,
         ?array $newMetadata = null,
+        ?array $newConfiguration = null,
         ?string $tenant = null,
         ?string $database = null,
     ): Response {
@@ -95,8 +98,24 @@ class Collections extends BaseResource
             collectionId: $collectionId,
             newName: $newName,
             newMetadata: $newMetadata,
+            newConfiguration: $newConfiguration,
             tenant: $tenant ?? $this->connector->getTenant(),
             database: $database ?? $this->connector->getDatabase(),
         ));
+    }
+
+    public function fork(string $collectionId, string $newName, ?string $tenant = null, ?string $database = null): Response
+    {
+        return $this->connector->send(new ForkCollection(
+            collectionId: $collectionId,
+            newName: $newName,
+            tenant: $tenant ?? $this->connector->getTenant(),
+            database: $database ?? $this->connector->getDatabase()
+        ));
+    }
+
+    public function getByCrn(string $crn): Response
+    {
+        return $this->connector->send(new GetCollectionByCrn(crn: $crn));
     }
 }

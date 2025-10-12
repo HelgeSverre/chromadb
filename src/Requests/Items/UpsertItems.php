@@ -30,6 +30,7 @@ class UpsertItems extends Request implements HasBody
         protected null|array|string $embeddings = null,
         protected null|array|string $metadatas = null,
         protected null|array|string $documents = null,
+        protected ?array $uris = null,
         protected ?string $tenant = null,
         protected ?string $database = null,
     ) {}
@@ -41,6 +42,7 @@ class UpsertItems extends Request implements HasBody
             'embeddings' => $this->embeddings,
             'metadatas' => $this->metadatas,
             'documents' => $this->documents,
-        ]);
+            'uris' => $this->uris,
+        ], fn ($value) => $value !== null);
     }
 }

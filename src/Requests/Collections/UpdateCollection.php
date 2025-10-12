@@ -28,6 +28,7 @@ class UpdateCollection extends Request implements HasBody
         protected string $collectionId,
         protected ?string $newName,
         protected ?array $newMetadata,
+        protected ?array $newConfiguration = null,
         protected ?string $tenant = null,
         protected ?string $database = null,
     ) {}
@@ -37,6 +38,7 @@ class UpdateCollection extends Request implements HasBody
         return array_filter([
             'new_name' => $this->newName,
             'new_metadata' => $this->newMetadata,
-        ]);
+            'new_configuration' => $this->newConfiguration,
+        ], fn ($value) => $value !== null);
     }
 }

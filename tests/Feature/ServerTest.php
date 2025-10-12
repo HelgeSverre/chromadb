@@ -36,3 +36,10 @@ it('can retrieve the server version', function () {
     $version = $this->chromadb->server()->version();
     expect($version)->toEqual('1.0.0');
 });
+
+it('can check server health', function () {
+    $response = $this->chromadb->server()->healthcheck();
+
+    // Health check should return 200 if healthy, 503 if unavailable
+    expect($response->status())->toBeIn([200, 503]);
+});

@@ -2,6 +2,8 @@
 
 namespace HelgeSverre\Chromadb\Resources;
 
+use HelgeSverre\Chromadb\Requests\Server\GetUserIdentity;
+use HelgeSverre\Chromadb\Requests\Server\Healthcheck;
 use HelgeSverre\Chromadb\Requests\Server\Heartbeat;
 use HelgeSverre\Chromadb\Requests\Server\PreFlightChecks;
 use HelgeSverre\Chromadb\Requests\Server\Reset;
@@ -54,5 +56,15 @@ class Server extends BaseResource
     public function preFlightChecks(): Response
     {
         return $this->connector->send(new PreFlightChecks);
+    }
+
+    public function healthcheck(): Response
+    {
+        return $this->connector->send(new Healthcheck);
+    }
+
+    public function identity(): Response
+    {
+        return $this->connector->send(new GetUserIdentity);
     }
 }

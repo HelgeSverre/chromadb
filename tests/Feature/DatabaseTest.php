@@ -26,3 +26,27 @@ it('retrieves a database correctly', function () {
     expect($getResponse->ok())->toBeTrue();
     expect($getResponse->json('name'))->toEqual('test_database');
 });
+
+it('lists databases correctly', function () {
+    $this->chromadb->database()->create('test_db_1');
+    $this->chromadb->database()->create('test_db_2');
+
+    $response = $this->chromadb->database()->list();
+
+    expect($response->ok())->toBeTrue()
+        ->and($response->json())->toBeArray()
+        ->and(count($response->json()))->toBeGreaterThanOrEqual(2);
+});
+
+it('lists databases with pagination', function () {
+    // Create multiple databases
+    foreach (range(1, 5) as $i) {
+        $this->chromadb->database()->create("paginated_db_{$i}");
+    }
+
+    $response = $this->chromadb->database()->list(limit: 2, offset: 0);
+
+    expect($response->ok())->toBeTrue()
+        ->and($response->json())->toBeArray()
+        ->and(count($response->json()))->toBeLessThanOrEqual(2);
+});
