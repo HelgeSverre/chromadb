@@ -408,7 +408,14 @@ $chromadb->items()->add(
 
 ### Automatic Embedding Generation
 
+#### Using withEmbeddings()
+
+Configure a client instance with an embedding function for automatic embedding generation:
+
 ```php
+// Create an embedding function
+$embedder = new OpenAIEmbeddings(apiKey: 'sk-...');
+
 // Configure client with embedder
 $chromadb = $chromadb->withEmbeddings($embedder);
 
@@ -425,6 +432,196 @@ $results = $chromadb->items()->queryWithText(
     queryText: 'search query',
     nResults: 10
 );
+```
+
+#### Available Embedding Providers
+
+All providers implement the `EmbeddingFunction` interface and can be used interchangeably. Each provider can be instantiated directly or using the `Embeddings` factory class.
+
+##### 1. OpenAI Embeddings
+
+```php
+use HelgeSverre\Chromadb\Embeddings\OpenAIEmbeddings;
+use HelgeSverre\Chromadb\Embeddings\Embeddings;
+
+// Direct instantiation
+$embedder = new OpenAIEmbeddings(
+    apiKey: 'sk-your-api-key',
+    model: 'text-embedding-3-small',  // Default
+    dimensions: 1536,                 // Optional: dimension reduction
+    organization: 'org-123'           // Optional: organization ID
+);
+
+// Or using factory
+$embedder = Embeddings::openai(
+    apiKey: 'sk-your-api-key',
+    model: 'text-embedding-3-small'
+);
+
+// Supported models:
+// - text-embedding-3-small (1536 dims, efficient)
+// - text-embedding-3-large (3072 dims, best quality)
+// - text-embedding-ada-002 (1536 dims, legacy)
+```
+
+##### 2. Voyage AI Embeddings
+
+```php
+use HelgeSverre\Chromadb\Embeddings\VoyageAIEmbeddings;
+
+$embedder = new VoyageAIEmbeddings(
+    apiKey: 'your-voyage-api-key',
+    model: 'voyage-3.5',      // Default
+    inputType: 'document'     // 'document' or 'query'
+);
+
+// Or using factory
+$embedder = Embeddings::voyage(
+    apiKey: 'your-voyage-api-key',
+    model: 'voyage-3.5'
+);
+
+// Supported models:
+// - voyage-3.5 (efficient, 8M TPM)
+// - voyage-3-large (best quality)
+// - voyage-code-3 (optimized for code)
+// - voyage-finance-2 (financial domain)
+// - voyage-law-2 (legal domain)
+```
+
+##### 3. Mistral AI Embeddings
+
+```php
+use HelgeSverre\Chromadb\Embeddings\MistralEmbeddings;
+
+$embedder = new MistralEmbeddings(
+    apiKey: 'your-mistral-api-key',
+    model: 'mistral-embed'  // Default (1024 dimensions)
+);
+
+// Or using factory
+$embedder = Embeddings::mistral(
+    apiKey: 'your-mistral-api-key',
+    model: 'mistral-embed'
+);
+```
+
+##### 4. Jina AI Embeddings
+
+```php
+use HelgeSverre\Chromadb\Embeddings\JinaEmbeddings;
+
+$embedder = new JinaEmbeddings(
+    apiKey: 'your-jina-api-key',
+    model: 'jina-embeddings-v3',           // Default
+    task: 'retrieval.query',               // Optional: task type
+    dimensions: 1024                       // Optional: dimension reduction
+);
+
+// Or using factory
+$embedder = Embeddings::jina(
+    apiKey: 'your-jina-api-key',
+    model: 'jina-embeddings-v3'
+);
+
+// Supported models:
+// - jina-embeddings-v3 (570M, 1024 dims, multilingual)
+// - jina-embeddings-v2-base-en (137M, 768 dims, English)
+// - jina-embeddings-v2-small-en (33M, 512 dims, English)
+// - jina-clip-v2 (885M, 1024 dims, multimodal)
+//
+// Optional task types:
+// - retrieval.query
+// - retrieval.passage
+// - text-matching
+```
+
+##### 5. Ollama Embeddings (Local)
+
+```php
+use HelgeSverre\Chromadb\Embeddings\OllamaEmbeddings;
+
+$embedder = new OllamaEmbeddings(
+    model: 'all-minilm',                    // Default
+    baseUrl: 'http://localhost:11434',     // Default
+    timeout: 60                             // Default timeout in seconds
+);
+
+// Or using factory
+$embedder = Embeddings::ollama(
+    model: 'all-minilm',
+    baseUrl: 'http://localhost:11434'
+);
+
+// Supported models (any Ollama model):
+// - all-minilm (lightweight, default)
+// - nomic-embed-text (high quality)
+// - mxbai-embed-large (larger model)
+// - snowflake-arctic-embed (specialized)
+```
+
+#### Creating Custom Embedding Functions
+
+You can create your own embedding provider by implementing the `EmbeddingFunction` interface:
+
+```php
+use HelgeSverre\Chromadb\Embeddings\EmbeddingFunction;
+
+class MyCustomEmbeddings implements EmbeddingFunction
+{
+    public function __construct(
+        private string $apiKey,
+        private string $model = 'my-model'
+    ) {}
+
+    /**
+     * Generate embeddings for the given texts.
+     *
+     * @param array<string> $texts Array of text strings to embed
+     * @return array<array<float>> 2D array where each element is an embedding vector
+     */
+    public function generate(array $texts): array
+    {
+        $embeddings = [];
+
+        foreach ($texts as $text) {
+            // Your custom embedding logic here
+            $vector = $this->callYourEmbeddingAPI($text);
+            $embeddings[] = $vector;
+        }
+
+        return $embeddings;
+    }
+
+    private function callYourEmbeddingAPI(string $text): array
+    {
+        // Call your embedding service
+        // Return array of floats, e.g., [0.1, 0.2, 0.3, ...]
+        return [];
+    }
+}
+
+// Use your custom embedder
+$embedder = new MyCustomEmbeddings(apiKey: 'your-key');
+$chromadb = $chromadb->withEmbeddings($embedder);
+```
+
+#### Interface Definition
+
+```php
+namespace HelgeSverre\Chromadb\Embeddings;
+
+interface EmbeddingFunction
+{
+    /**
+     * Generate embeddings for the given texts.
+     *
+     * @param array<string> $texts An array of text strings to embed
+     * @return array<array<float>> A 2D array where each element is an embedding vector
+     * @throws \HelgeSverre\Chromadb\Exceptions\EmbeddingException
+     */
+    public function generate(array $texts): array;
+}
 ```
 
 ## Example: Semantic Search with ChromaDB and OpenAI Embeddings
