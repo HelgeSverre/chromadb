@@ -5,7 +5,42 @@ All notable changes to `chromadb` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2025-01-XX
+## [2.1.0] - 2025-10-22
+
+### Added
+
+- **Laravel 12 Support** - Added compatibility with Laravel 12.x
+  - Updated `orchestra/testbench` to support `^8.8 || ^9.0 || ^10.0`
+  - Supports Laravel 10.x, 11.x, and 12.x
+  - Laravel 12 released February 24, 2025 with zero breaking changes
+
+### Changed
+
+- **Embedding Provider Documentation** - Significantly enhanced documentation
+  - Added complete documentation for all 5 embedding providers
+  - Direct instantiation examples for each provider (OpenAI, Voyage AI, Mistral AI, Jina AI, Ollama)
+  - Factory method examples using `Embeddings` class
+  - Constructor parameter documentation with defaults
+  - Added guide for creating custom embedding functions
+  - Documented `EmbeddingFunction` interface
+
+- **Version Compatibility** - Updated ChromaDB server version range
+  - Changed from `v1.0.0+` to `1.0.0 - 1.1.x` for better clarity
+  - Latest tested ChromaDB server version: 1.1.1
+
+- **Documentation** - General improvements
+  - Added alternative package mention ([CodeWithKyrian/chromadb-php](https://github.com/CodeWithKyrian/chromadb-php))
+  - Removed internal API verification report from README
+  - Added project-specific guidelines in `claude.md`
+
+### Fixed
+
+- Documentation now shows all embedding provider classes and usage patterns
+- All code examples verified and updated
+
+---
+
+## [2.0.0] - 2025-10-22
 
 ### 🎉 Major Release: Complete ChromaDB v2 API Support
 
