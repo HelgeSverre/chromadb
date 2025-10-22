@@ -5,6 +5,27 @@ All notable changes to `chromadb` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-10-22
+
+### Fixed
+
+- **Laravel 12 Support** - Fixed dependency conflict preventing Laravel 12 installation
+    - Updated `spatie/laravel-data` from `^3.10` to `^4.0` for Laravel 12 compatibility
+    - Added `test-laravel-install.sh` for automated testing across Laravel versions
+    - Verified package installation works correctly on Laravel 10.x, 11.x, and 12.x
+
+### Changed
+
+- **README Documentation** - Major reorganization for clarity
+    - Emphasized framework-agnostic usage (works in any PHP 8.2+ project)
+    - Moved Laravel-specific content to dedicated "Laravel Integration (Optional)" section
+    - Split Quick Start into "Basic Usage" and "Laravel Usage" subsections
+    - Clarified which features require Laravel vs framework-agnostic
+    - Improved embedding provider documentation with separate "Direct Usage" and "Laravel Config" examples
+    - Removed confusing dependency injection snippet from Quick Start
+
+---
+
 ## [2.1.0] - 2025-10-22
 
 ### Added
