@@ -18,25 +18,20 @@ class CreateCollection extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/collections';
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections";
     }
 
     public function __construct(
         protected string $name,
         protected bool $getOrCreate = false,
         protected ?array $metadata = null,
+        protected ?array $configuration = null,
         protected ?string $tenant = null,
         protected ?string $database = null,
-    ) {
-    }
-
-    public function defaultQuery(): array
-    {
-        return array_filter([
-            'tenant' => $this->tenant,
-            'database' => $this->database,
-        ]);
-    }
+    ) {}
 
     protected function defaultBody(): array
     {
@@ -44,6 +39,7 @@ class CreateCollection extends Request implements HasBody
             'name' => $this->name,
             'get_or_create' => $this->getOrCreate,
             'metadata' => $this->metadata,
-        ]);
+            'configuration' => $this->configuration,
+        ], fn ($value) => $value !== null);
     }
 }

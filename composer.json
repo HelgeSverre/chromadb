@@ -27,21 +27,25 @@
         "spatie/laravel-package-tools": "^1.14.0"
     },
     "require-dev": {
+        "larastan/larastan": "^2.0.1",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^7.8",
-        "larastan/larastan": "^2.0.1",
         "orchestra/testbench": "^8.8",
         "pestphp/pest": "^2.20",
         "pestphp/pest-plugin-arch": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0"
+        "phpstan/phpstan-phpunit": "^1.0",
+        "spatie/ray": "^1.42"
     },
     "autoload": {
         "psr-4": {
             "HelgeSverre\\Chromadb\\": "src/"
-        }
+        },
+        "files": [
+            "src/Embeddings/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -51,8 +55,11 @@
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
+        "test:unit": "vendor/bin/pest --testsuite=Unit",
+        "test:feature": "vendor/bin/pest --testsuite=Feature",
+        "test:integration": "vendor/bin/pest --testsuite=Integration",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint src tests config"
     },
     "config": {
         "sort-packages": true,

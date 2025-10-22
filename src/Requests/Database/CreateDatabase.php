@@ -18,21 +18,15 @@ class CreateDatabase extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/databases';
+        $tenant = $this->tenant ?? 'default_tenant';
+
+        return "/api/v2/tenants/{$tenant}/databases";
     }
 
     public function __construct(
         protected string $name,
         protected ?string $tenant = null,
-    ) {
-    }
-
-    public function defaultQuery(): array
-    {
-        return array_filter([
-            'tenant' => $this->tenant,
-        ]);
-    }
+    ) {}
 
     protected function defaultBody(): array
     {

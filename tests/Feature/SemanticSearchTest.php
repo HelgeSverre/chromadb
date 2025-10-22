@@ -9,22 +9,21 @@ beforeEach(function () {
         port: '8000'
     );
 
-    // Reset the server before each test
     $this->chromadb->server()->reset();
 });
 
 it('performs semantic search correctly', function () {
-    // Prepare data
+    // Prepare data (v2 API metadata cannot contain arrays, only scalar values)
     $blogPosts = [
         [
             'title' => 'Exploring Laravel',
             'summary' => 'A deep dive into Laravel frameworks...',
-            'tags' => ['PHP', 'Laravel', 'Web Development'],
+            'tags' => 'PHP, Laravel, Web Development', // Changed to string
         ],
         [
             'title' => 'Introduction to React',
             'summary' => 'Understanding the basics of React and how it revolutionizes frontend development.',
-            'tags' => ['JavaScript', 'React', 'Frontend'],
+            'tags' => 'JavaScript, React, Frontend', // Changed to string
         ],
     ];
 
@@ -51,10 +50,14 @@ it('performs semantic search correctly', function () {
 
     // Insert blog posts into ChromaDB
     foreach ($blogPosts as $post) {
+        // Extract embedding separately (metadata can't contain arrays)
+        $embedding = $post['embedding'];
+        unset($post['embedding']);
+
         $addItemResponse = $this->chromadb->items()->add(
             collectionId: $collectionId,
             ids: [$post['title']],
-            embeddings: [$post['embedding']],
+            embeddings: [$embedding],
             metadatas: [$post]
         );
 

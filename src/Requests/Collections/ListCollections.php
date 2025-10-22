@@ -14,7 +14,10 @@ class ListCollections extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/collections';
+        $tenant = $this->tenant ?? 'default_tenant';
+        $database = $this->database ?? 'default_database';
+
+        return "/api/v2/tenants/{$tenant}/databases/{$database}/collections";
     }
 
     public function __construct(
@@ -22,16 +25,13 @@ class ListCollections extends Request
         protected ?int $offset = null,
         protected ?string $tenant = null,
         protected ?string $database = null,
-    ) {
-    }
+    ) {}
 
     public function defaultQuery(): array
     {
         return array_filter([
             'limit' => $this->limit,
             'offset' => $this->offset,
-            'tenant' => $this->tenant,
-            'database' => $this->database,
         ]);
     }
 }

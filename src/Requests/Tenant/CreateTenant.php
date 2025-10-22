@@ -18,12 +18,10 @@ class CreateTenant extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/tenants';
+        return '/api/v2/tenants';
     }
 
-    public function __construct(protected string $name)
-    {
-    }
+    public function __construct(protected string $name) {}
 
     protected function defaultBody(): array
     {

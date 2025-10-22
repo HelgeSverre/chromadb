@@ -4,9 +4,22 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/chromadb.svg?style=flat-square)](https://packagist.org/packages/helgesverre/chromadb)
 [![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/chromadb.svg?style=flat-square)](https://packagist.org/packages/helgesverre/chromadb)
+[![ChromaDB v2 API](https://img.shields.io/badge/ChromaDB-v2%20API-blue.svg)](https://docs.trychroma.com/)
 
 [ChromaDB](https://github.com/chroma-core/chroma) is an open-source vector database that allows you to store and query
-vector embeddings. This package provides a PHP client for the ChromaDB API.
+vector embeddings. This package provides a PHP client for the ChromaDB v2 API.
+
+## Documentation
+
+- **[API Verification Report](./docs/API_VERIFICATION_REPORT.md)** - Comprehensive v2 API implementation verification
+
+## Version Compatibility
+
+This package supports **ChromaDB v2 API**. The v1 API has been deprecated by ChromaDB.
+
+- **ChromaDB Server:** v1.0.0+
+- **PHP:** 8.2+
+- **Laravel:** 10.x, 11.x (optional)
 
 ## Installation
 
@@ -15,6 +28,8 @@ You can install the package via composer:
 ```bash
 composer require helgesverre/chromadb
 ```
+
+### Laravel Configuration
 
 You can publish the config file with:
 
@@ -27,20 +42,115 @@ This is the contents of the published `config/chromadb.php` file:
 ```php
 return [
     'token' => env('CHROMADB_TOKEN'),
-    'host' => env('CHROMADB_HOST', 'localhost'),
-    'port' => env('CHROMADB_PORT', '19530'),
+    'host' => env('CHROMADB_HOST', 'http://localhost'),
+    'port' => env('CHROMADB_PORT', '8000'),
+
+    'tenant' => env('CHROMADB_TENANT', 'default_tenant'),
+    'database' => env('CHROMADB_DATABASE', 'default_database'),
+
+    'embeddings' => [
+        'default' => env('CHROMADB_EMBEDDING_PROVIDER', 'openai'),
+        'providers' => [
+            'openai' => [
+                'api_key' => env('OPENAI_API_KEY'),
+                'model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
+            ],
+            'voyage' => [
+                'api_key' => env('VOYAGE_API_KEY'),
+                'model' => env('VOYAGE_EMBEDDING_MODEL', 'voyage-3.5'),
+            ],
+            'mistral' => [
+                'api_key' => env('MISTRAL_API_KEY'),
+                'model' => env('MISTRAL_EMBEDDING_MODEL', 'mistral-embed'),
+            ],
+            'jina' => [
+                'api_key' => env('JINA_API_KEY'),
+                'model' => env('JINA_EMBEDDING_MODEL', 'jina-embeddings-v3'),
+            ],
+            'ollama' => [
+                'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
+                'model' => env('OLLAMA_EMBEDDING_MODEL', 'all-minilm'),
+            ],
+        ],
+    ],
 ];
 ```
 
-## Usage
+### Environment Variables
+
+Add these variables to your `.env` file:
+
+```env
+# ChromaDB Connection
+CHROMADB_TOKEN=test-token-chroma-local-dev
+CHROMADB_HOST=http://localhost
+CHROMADB_PORT=8000
+
+# Multi-tenancy (optional)
+CHROMADB_TENANT=default_tenant
+CHROMADB_DATABASE=default_database
+
+# Embedding Provider (optional)
+CHROMADB_EMBEDDING_PROVIDER=openai
+
+# OpenAI Configuration (if using OpenAI embeddings)
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+
+# Voyage AI Configuration (if using Voyage embeddings)
+VOYAGE_API_KEY=your-voyage-api-key
+VOYAGE_EMBEDDING_MODEL=voyage-3.5
+
+# Mistral AI Configuration (if using Mistral embeddings)
+MISTRAL_API_KEY=your-mistral-api-key
+MISTRAL_EMBEDDING_MODEL=mistral-embed
+
+# Jina AI Configuration (if using Jina embeddings)
+JINA_API_KEY=your-jina-api-key
+JINA_EMBEDDING_MODEL=jina-embeddings-v3
+
+# Ollama Configuration (if using local Ollama embeddings)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_EMBEDDING_MODEL=all-minilm
+```
+
+## Quick Start
 
 ```php
-$chromadb = new \HelgeSverre\Chromadb\Chromadb(
+use HelgeSverre\Chromadb\Chromadb;
+
+// Initialize client
+$chromadb = new Chromadb(
     token: 'test-token-chroma-local-dev',
     host: 'http://localhost',
     port: '8000'
 );
 
+// Create a collection
+$response = $chromadb->collections()->create('my_collection');
+$collectionId = $response->json('id');
+
+// Add documents
+$chromadb->items()->add(
+    collectionId: $collectionId,
+    ids: ['doc1', 'doc2'],
+    embeddings: [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]],
+    documents: ['Document 1', 'Document 2']
+);
+
+// Query
+$results = $chromadb->items()->query(
+    collectionId: $collectionId,
+    queryEmbeddings: [[0.1, 0.2, 0.3]],
+    nResults: 10
+);
+```
+
+## Usage
+
+### Collections
+
+```php
 // Create a new collection with optional metadata
 $chromadb->collections()->create(
     name: 'my_collection',
@@ -63,13 +173,32 @@ $chromadb->collections()->delete(
 $chromadb->collections()->update(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     newName: 'new_collection_name',
+    newMetadata: ['updated' => 'true']
 );
 
-// Add items to a collection with optional embeddings, metadata, and documents
+// List all collections
+$collections = $chromadb->collections()->list();
+
+// Fork a collection (create a copy)
+$chromadb->collections()->fork(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    newName: 'my_collection_copy'
+);
+
+// Get collection by CRN (Collection Resource Name)
+$chromadb->collections()->getByCrn(
+    crn: 'crn:chroma:collection:default_tenant:default_database:3ea5a914-e2ab-47cb-b285-8e585c9af4f3'
+);
+```
+
+### Items
+
+```php
+// Add items to a collection with embeddings, metadata, and documents
 $chromadb->items()->add(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
-    embeddings: ['embedding1', 'embedding2'],
+    embeddings: [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]],
     documents: ['doc1', 'doc2']
 );
 
@@ -77,7 +206,7 @@ $chromadb->items()->add(
 $chromadb->items()->update(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item1', 'item2'],
-    embeddings: ['new_embedding1', 'new_embedding2'],
+    embeddings: [[0.7, 0.8, 0.9], [1.0, 1.1, 1.2]],
     documents: ['new_doc1', 'new_doc2']
 );
 
@@ -85,6 +214,7 @@ $chromadb->items()->update(
 $chromadb->items()->upsert(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     ids: ['item'],
+    embeddings: [[0.5, 0.6, 0.7]],
     metadatas: [['title' => 'metadata']],
     documents: ['document']
 );
@@ -109,11 +239,192 @@ $chromadb->items()->count(
 // Query items in a collection based on embeddings, texts, and other filters
 $chromadb->items()->query(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
-    queryEmbeddings: [createTestVector(0.8)],
+    queryEmbeddings: [[0.8, 0.8, 0.8]],
     include: ['documents', 'metadatas', 'distances'],
     nResults: 5
 );
 
+// Hybrid search with multiple search strategies
+$chromadb->items()->search(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    searches: [
+        [
+            'filter' => [
+                'query_ids' => ['id1', 'id2'],
+                'where_clause' => ['category' => 'technology']
+            ],
+            'limit' => ['limit' => 10, 'offset' => 0],
+            'rank' => ['type' => 'bm25'],
+            'select' => ['keys' => ['title', 'content']]
+        ]
+    ]
+);
+```
+
+### Database Management
+
+ChromaDB v2 supports multiple databases within a tenant for logical data separation:
+
+```php
+// Create a new database
+$chromadb->database()->create(name: 'production');
+
+// Get database information
+$response = $chromadb->database()->get(database: 'production');
+
+// List all databases in the current tenant
+$databases = $chromadb->database()->list();
+
+// List databases with pagination
+$databases = $chromadb->database()->list(
+    limit: 10,
+    offset: 0
+);
+
+// Delete a database
+$chromadb->database()->delete(database: 'old_database');
+
+// Work with a specific database
+$productionDb = $chromadb->withDatabase('production');
+$stagingDb = $chromadb->withDatabase('staging');
+```
+
+### Tenant Management
+
+Manage tenants for multi-tenancy isolation:
+
+```php
+// Create a new tenant
+$chromadb->tenant()->create(name: 'customer_acme');
+
+// Get tenant information
+$response = $chromadb->tenant()->get(tenant: 'customer_acme');
+
+// Update tenant configuration
+$chromadb->tenant()->update(
+    tenantName: 'customer_acme',
+    resourceName: 'acme-corp-resource'
+);
+```
+
+### Server API
+
+Monitor and manage the ChromaDB server:
+
+```php
+// Check server health
+$response = $chromadb->server()->healthcheck();
+
+// Get heartbeat (nanosecond timestamp)
+$response = $chromadb->server()->heartbeat();
+
+// Get server version
+$version = $chromadb->server()->version();
+
+// Get pre-flight checks information
+$response = $chromadb->server()->preFlightChecks();
+
+// Get current user identity and permissions
+$response = $chromadb->server()->identity();
+$userId = $response->json('user_id');
+$tenant = $response->json('tenant');
+$databases = $response->json('databases');
+
+// Reset the server (⚠️ WARNING: Deletes all data)
+$success = $chromadb->server()->reset();
+```
+
+### Multi-Tenancy
+
+ChromaDB v2 provides native multi-tenancy support:
+
+```php
+// Create tenant-specific clients
+$tenant1Client = $chromadb->withTenant('customer_a');
+$tenant2Client = $chromadb->withTenant('customer_b');
+
+// Operations are automatically isolated
+$tenant1Collections = $tenant1Client->collections()->list();
+$tenant2Collections = $tenant2Client->collections()->list();
+
+// Switch database context
+$productionClient = $chromadb
+    ->withTenant('my_org')
+    ->withDatabase('production');
+```
+
+## Embedding Providers
+
+This package includes built-in support for automatic embedding generation using various providers. Instead of manually generating embeddings, you can configure an embedding provider and let the package handle it automatically.
+
+### Supported Providers
+
+- **OpenAI** - `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002`
+- **Voyage AI** - `voyage-3.5` (default), `voyage-3-large`, `voyage-code-3`, `voyage-finance-2`, `voyage-law-2`
+- **Mistral AI** - `mistral-embed`
+- **Jina AI** - `jina-embeddings-v3`, `jina-embeddings-v2-base-en`, `jina-embeddings-v2-small-en`, `jina-clip-v2`
+- **Ollama** - Local embeddings with any Ollama model
+
+### Configuration
+
+Configure your preferred embedding provider in your `.env` file:
+
+```env
+CHROMADB_EMBEDDING_PROVIDER=openai
+OPENAI_API_KEY=your-api-key-here
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+```
+
+### Usage with Embedding Provider
+
+When you add items with documents but without embeddings, the configured provider will automatically generate them:
+
+```php
+use HelgeSverre\Chromadb\Embeddings\Embeddings;
+
+// Create embedder from config
+$embedder = Embeddings::fromConfig('openai');
+
+// Or create directly with parameters
+$embedder = Embeddings::openai(
+    apiKey: config('chromadb.embeddings.providers.openai.api_key'),
+    model: 'text-embedding-3-small'
+);
+
+$documents = [
+    'The quick brown fox jumps over the lazy dog',
+    'Laravel is a web application framework with expressive, elegant syntax',
+];
+
+$embeddings = $embedder->generate($documents);
+
+$chromadb->items()->add(
+    collectionId: $collectionId,
+    ids: ['doc1', 'doc2'],
+    embeddings: $embeddings,
+    documents: $documents
+);
+```
+
+### Automatic Embedding Generation
+
+```php
+// Configure client with embedder
+$chromadb = $chromadb->withEmbeddings($embedder);
+
+// Add documents with automatic embeddings
+$chromadb->items()->addWithEmbeddings(
+    collectionId: $collectionId,
+    documents: ['Document 1', 'Document 2'],
+    ids: ['doc1', 'doc2']
+);
+
+// Query with text (automatic embedding)
+$results = $chromadb->items()->queryWithText(
+    collectionId: $collectionId,
+    queryText: 'search query',
+    nResults: 10
+);
 ```
 
 ## Example: Semantic Search with ChromaDB and OpenAI Embeddings
@@ -132,12 +443,12 @@ $blogPosts = [
     [
         'title' => 'Exploring Laravel',
         'summary' => 'A deep dive into Laravel frameworks...',
-        'tags' => ['PHP', 'Laravel', 'Web Development']
+        'tags' => 'PHP, Laravel, Web Development'
     ],
     [
         'title' => 'Introduction to React',
         'summary' => 'Understanding the basics of React and how it revolutionizes frontend development.',
-        'tags' => ['JavaScript', 'React', 'Frontend']
+        'tags' => 'JavaScript, React, Frontend'
     ],
 ];
 ```
@@ -178,10 +489,14 @@ Insert these embeddings, along with other blog post data, into your ChromaDB col
 
 ```php
 foreach ($blogPosts as $post) {
+    // Extract embedding from post (v2 API metadata cannot contain arrays)
+    $embedding = $post['vector'];
+    unset($post['vector']); // Remove from metadata
+
     $chromadb->items()->add(
         collectionId: $collectionId,
         ids: [$post['title']],
-        embeddings: [$post['embedding']],
+        embeddings: [$embedding],
         metadatas: [$post]
     );
 }
@@ -192,7 +507,14 @@ foreach ($blogPosts as $post) {
 Generate a search vector for your query, akin to how you processed the blog posts.
 
 ```php
-$searchEmbedding = getOpenAIEmbedding('laravel framework');
+$searchResponse = OpenAI::client('sk-your-openai-api-key')
+    ->embeddings()
+    ->create([
+        'model' => 'text-embedding-ada-002',
+        'input' => 'laravel framework',
+    ]);
+
+$searchEmbedding = $searchResponse->embeddings[0]->embedding;
 ```
 
 ### Searching using the Embedding in ChromaDB
@@ -208,10 +530,13 @@ $searchResponse = $chromadb->items()->query(
 );
 
 // Output the search results
-foreach ($searchResponse->json('results') as $result) {
-    echo "Title: " . $result['metadatas']['title'] . "\n";
-    echo "Summary: " . $result['metadatas']['summary'] . "\n";
-    echo "Tags: " . implode(', ', $result['metadatas']['tags']) . "\n\n";
+$metadatas = $searchResponse->json('metadatas.0');
+$ids = $searchResponse->json('ids.0');
+
+foreach ($metadatas as $index => $metadata) {
+    echo "Title: " . $metadata['title'] . "\n";
+    echo "Summary: " . $metadata['summary'] . "\n";
+    echo "Tags: " . $metadata['tags'] . "\n\n";
 }
 ```
 
@@ -221,7 +546,7 @@ To quickly get started with ChromaDB, you can run it in Docker
 
 ```bash
 # Download the docker-compose.yml file
-wget https://github.com/HelgeSverre/chromadb/blob/main/docker-compose.yml
+wget https://raw.githubusercontent.com/HelgeSverre/chromadb/refs/heads/main/docker-compose.yml
 
 # Start ChromaDB
 docker compose up -d
@@ -248,10 +573,23 @@ To stop ChromaDB, run `docker compose down`, to wipe all the data, run `docker c
 cp .env.example .env
 
 docker compose up -d
- 
+
 composer test
 composer analyse src
 ```
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security-related issues, please email the maintainer instead of using the issue tracker.
+
+## Credits
+
+- [Helge Sverre](https://github.com/HelgeSverre)
+- [All Contributors](../../contributors)
 
 ## License
 

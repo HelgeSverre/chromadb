@@ -2,6 +2,8 @@
 
 namespace HelgeSverre\Chromadb\Resources;
 
+use HelgeSverre\Chromadb\Requests\Server\GetUserIdentity;
+use HelgeSverre\Chromadb\Requests\Server\Healthcheck;
 use HelgeSverre\Chromadb\Requests\Server\Heartbeat;
 use HelgeSverre\Chromadb\Requests\Server\PreFlightChecks;
 use HelgeSverre\Chromadb\Requests\Server\Reset;
@@ -23,7 +25,7 @@ class Server extends BaseResource
      */
     public function reset(): bool
     {
-        $response = $this->connector->send(new Reset());
+        $response = $this->connector->send(new Reset);
 
         if ($response->failed()) {
             return false;
@@ -40,7 +42,7 @@ class Server extends BaseResource
      */
     public function version(): string
     {
-        $response = $this->connector->send(new Version());
+        $response = $this->connector->send(new Version);
 
         return json_decode($response->body(), true);
 
@@ -48,11 +50,21 @@ class Server extends BaseResource
 
     public function heartbeat(): Response
     {
-        return $this->connector->send(new Heartbeat());
+        return $this->connector->send(new Heartbeat);
     }
 
     public function preFlightChecks(): Response
     {
-        return $this->connector->send(new PreFlightChecks());
+        return $this->connector->send(new PreFlightChecks);
+    }
+
+    public function healthcheck(): Response
+    {
+        return $this->connector->send(new Healthcheck);
+    }
+
+    public function identity(): Response
+    {
+        return $this->connector->send(new GetUserIdentity);
     }
 }

@@ -19,6 +19,6 @@ class Heartbeat extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/api/v1/heartbeat';
+        return '/api/v2/heartbeat';
     }
 }
