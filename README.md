@@ -18,7 +18,7 @@ vector embeddings. This package provides a PHP client for the ChromaDB v2 API.
 This package supports **ChromaDB v2 API**. The v1 API has been deprecated by ChromaDB.
 
 - **ChromaDB Server:** v1.0.0+
-- **PHP:** 8.1+
+- **PHP:** 8.2+
 - **Laravel:** 10.x, 11.x (optional)
 
 ## Installation

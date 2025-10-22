@@ -93,9 +93,6 @@ class Embeddings
      * Requires the chromadb.embeddings config to be set up.
      *
      * @param  string|null  $provider  The provider name (openai, voyage, mistral, jina, ollama) or null for default
-     *
-     * @TODO:  maybe bane thius factory()?
-     *
      * @throws InvalidArgumentException
      */
     public static function fromConfig(?string $provider = null): EmbeddingFunction

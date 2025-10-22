@@ -1,0 +1,223 @@
+# Changelog
+
+All notable changes to `chromadb` will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.0.0] - 2025-01-XX
+
+### 🎉 Major Release: Complete ChromaDB v2 API Support
+
+This is a major release that implements complete support for the ChromaDB v2 API with **29/29 endpoints** (100% coverage). The v1 API has been deprecated by ChromaDB, and this version brings full compatibility with ChromaDB server v1.0.0+.
+
+### 🚀 Added
+
+#### Multi-Tenancy & Database Management
+- **Multi-tenancy support** with tenant and database isolation
+- `withTenant()` method for tenant context switching
+- `withDatabase()` method for database context switching
+- **Tenant Management API:**
+  - `Tenant::create()` - Create new tenants
+  - `Tenant::get()` - Retrieve tenant information
+  - `Tenant::update()` - Update tenant configuration
+- **Database Management API:**
+  - `Database::create()` - Create new databases
+  - `Database::get()` - Get database information
+  - `Database::list()` - List all databases with pagination
+  - `Database::delete()` - Delete databases
+
+#### Enhanced Collections API
+- `Collections::list()` - List all collections with pagination
+- `Collections::fork()` - Fork/copy existing collections
+- `Collections::getByCrn()` - Get collection by Collection Resource Name (CRN)
+- Enhanced `Collections::create()` with `getOrCreate`, `metadata`, and `configuration` parameters
+- Enhanced `Collections::update()` with `newMetadata` and `newConfiguration` support
+
+#### Enhanced Items API
+- `Items::search()` - Hybrid search with multiple search strategies
+- `Items::addWithEmbeddings()` - Automatic embedding generation when adding items
+- `Items::queryWithText()` - Query using text with automatic embedding generation
+- Enhanced all methods with full v2 API parameter support
+- Support for `uris` parameter across add/update/upsert operations
+
+#### Server API Methods
+- `Server::healthcheck()` - Check server health and readiness
+- `Server::identity()` - Get current user identity and permissions
+- `Server::heartbeat()` - Get nanosecond heartbeat timestamp
+- `Server::preFlightChecks()` - Get pre-flight checks information
+- `Server::version()` - Get server version
+- `Server::reset()` - Reset server (with proper warnings)
+
+#### Embedding Providers
+- **OpenAI** embeddings support (text-embedding-3-small, text-embedding-3-large, ada-002)
+- **Voyage AI** embeddings support (voyage-3.5, voyage-3-large, voyage-code-3, domain-specific models)
+- **Mistral AI** embeddings support (mistral-embed)
+- **Jina AI** embeddings support (v3, v2-base-en, v2-small-en, clip-v2)
+- **Ollama** local embeddings support (any Ollama model)
+- `Embeddings::fromConfig()` for Laravel configuration integration
+- Named constructor methods: `Embeddings::openai()`, `Embeddings::voyage()`, etc.
+
+#### Configuration & Environment
+- Comprehensive `config/chromadb.php` with embedding provider configuration
+- Default tenant and database configuration
+- Full `.env` variable documentation
+- Environment variable examples for all providers
+
+#### Documentation
+- Complete API documentation for all 29 endpoints
+- Database Management section
+- Tenant Management section
+- Server API documentation
+- Multi-tenancy usage patterns
+- Semantic search example
+- Comprehensive API verification report
+- All examples verified against v2 specification
+
+#### Testing
+- Comprehensive test suite covering all 29 endpoints
+- `DatabaseManagementTest` for database operations
+- `TenantManagementTest` for tenant operations
+- `SemanticSearchTest` for end-to-end semantic search
+- Integration tests for all embedding providers
+- Tests for multi-tenancy scenarios
+- 100% API coverage verification
+
+### ⚠️ Breaking Changes
+
+#### Return Type Changes
+- **`Collections::count()`** now returns `int` instead of `Response`
+  ```php
+  // v1
+  $response = $chromadb->collections()->count();
+  $count = (int) $response->body();
+
+  // v2
+  $count = $chromadb->collections()->count(); // Returns int directly
+  ```
+
+- **`Items::count()`** now returns `int` instead of `Response`
+  ```php
+  // v1
+  $response = $chromadb->items()->count($collectionId);
+  $count = (int) $response->body();
+
+  // v2
+  $count = $chromadb->items()->count($collectionId); // Returns int directly
+  ```
+
+#### Metadata Constraints
+- **v2 API only supports scalar values in metadata** (no nested arrays)
+  ```php
+  // v1 - Arrays allowed (no longer works)
+  $metadata = ['tags' => ['php', 'laravel', 'vector-db']];
+
+  // v2 - Only scalars allowed
+  $metadata = ['tags' => 'php, laravel, vector-db'];
+  ```
+
+#### Embedding Format Requirements
+- Embeddings **must be numeric vectors** (arrays of floats)
+- String embeddings are no longer accepted
+  ```php
+  // Wrong - String embeddings
+  embeddings: ['embedding1', 'embedding2']
+
+  // Correct - Numeric vectors
+  embeddings: [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+  ```
+
+#### Configuration Changes
+- **Host configuration now requires protocol**
+  - Before: `'host' => 'localhost'`
+  - After: `'host' => 'http://localhost'`
+  - Prevents malformed URLs in Laravel service provider
+
+#### API Endpoint Changes
+- All v2 endpoints now use tenant/database path parameters
+- Default values: `default_tenant` and `default_database`
+- CRN (Collection Resource Name) format introduced for global collection access
+
+### 🔄 Changed
+
+#### Embeddings
+- Renamed `EmbeddingFactory` to `Embeddings` class
+- Renamed `embed()` method to `generate()`
+- Improved embedding provider configuration structure
+- Updated model defaults (e.g., Voyage AI now defaults to `voyage-3.5`)
+
+#### Request Classes
+- All 29 request classes updated for v2 API compatibility
+- Enhanced parameter validation
+- Proper handling of tenant/database context
+- Query parameters separated from body parameters where appropriate
+
+#### PHP Version Requirement
+- **Minimum PHP version: 8.2+** (updated from 8.1)
+
+### 🐛 Fixed
+
+- Configuration host default now includes protocol to prevent connection failures
+- README examples corrected with proper v2 API formats
+- Semantic search example fixed for v2 response structure
+- Parameter naming conventions properly converted (camelCase ↔ snake_case)
+- All documentation inaccuracies corrected
+
+### 📚 Documentation
+
+- Added comprehensive [API Verification Report](./docs/API_VERIFICATION_REPORT.md)
+- Complete documentation for all 34 public methods across 5 resources
+- Updated all code examples to v2 API format
+- Added environment variable reference guide
+- Fixed broken documentation links
+- Added multi-tenancy usage patterns
+- Enhanced semantic search example
+
+### 🔒 Security
+
+- No security vulnerabilities addressed in this release
+- All API calls require authentication via token
+- Multi-tenancy provides data isolation
+
+### 🏗️ Internal
+
+- Upgraded to Saloon v3 for HTTP client
+- Improved code organization and structure
+- Enhanced test coverage (90+ passing tests)
+- Added comprehensive verification against OpenAPI spec
+- Clean separation of concerns between Request and Resource classes
+
+---
+
+## [1.x] - Previous Versions
+
+Previous versions used the deprecated ChromaDB v1 API. See git history for details.
+
+### Migration from v1 to v2
+
+For a complete migration guide, see the [API Verification Report](./docs/API_VERIFICATION_REPORT.md) which includes:
+- All breaking changes documented
+- Before/after code examples
+- Parameter mapping reference
+- New features guide
+
+#### Quick Migration Checklist
+
+- [ ] Update to PHP 8.2+
+- [ ] Change `count()` calls to handle `int` return type
+- [ ] Convert metadata arrays to scalar values
+- [ ] Ensure embeddings are numeric vectors
+- [ ] Add `http://` to `CHROMADB_HOST` environment variable
+- [ ] Update from `EmbeddingFactory` to `Embeddings` class
+- [ ] Change `embed()` calls to `generate()`
+- [ ] Test multi-tenancy if using multiple customers/projects
+- [ ] Review new methods (database management, tenant management, search)
+
+---
+
+## Links
+
+- [GitHub Repository](https://github.com/helgesverre/chromadb)
+- [Issue Tracker](https://github.com/helgesverre/chromadb/issues)
+- [ChromaDB Documentation](https://docs.trychroma.com/)
+- [API Verification Report](./docs/API_VERIFICATION_REPORT.md)
