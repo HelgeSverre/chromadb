@@ -9,17 +9,17 @@
 [ChromaDB](https://github.com/chroma-core/chroma) is an open-source vector database that allows you to store and query
 vector embeddings. This package provides a PHP client for the ChromaDB v2 API.
 
-## Documentation
+> **Looking for an alternative?** Check out [CodeWithKyrian/chromadb-php](https://github.com/CodeWithKyrian/chromadb-php) for another ChromaDB PHP client.
 
-- **[API Verification Report](./docs/API_VERIFICATION_REPORT.md)** - Comprehensive v2 API implementation verification
+## Documentation
 
 ## Version Compatibility
 
 This package supports **ChromaDB v2 API**. The v1 API has been deprecated by ChromaDB.
 
-- **ChromaDB Server:** v1.0.0+
+- **ChromaDB Server:** 1.0.0 - 1.1.x
 - **PHP:** 8.2+
-- **Laravel:** 10.x, 11.x (optional)
+- **Laravel:** 10.x, 11.x, 12.x (optional)
 
 ## Installation
 
