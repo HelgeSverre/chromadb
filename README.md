@@ -11,11 +11,7 @@ vector embeddings. This package provides a PHP client for the ChromaDB v2 API.
 
 ## Documentation
 
-- **[API Reference](./docs/api-reference.md)** - Complete API documentation with examples
-- **[Getting Started](./docs/getting-started.md)** - Step-by-step tutorial for beginners
-- **[Migration Guide](./docs/migration-guide.md)** - Migrating from v1 to v2 API
-- **[Advanced Usage](./docs/advanced-usage.md)** - Advanced patterns and techniques
-- **[Verification Report](./docs/v2-verification-report.md)** - Comprehensive v2 implementation report
+- **[API Verification Report](./docs/API_VERIFICATION_REPORT.md)** - Comprehensive v2 API implementation verification
 
 ## Version Compatibility
 
@@ -248,6 +244,94 @@ $chromadb->items()->query(
     nResults: 5
 );
 
+// Hybrid search with multiple search strategies
+$chromadb->items()->search(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    searches: [
+        [
+            'filter' => [
+                'query_ids' => ['id1', 'id2'],
+                'where_clause' => ['category' => 'technology']
+            ],
+            'limit' => ['limit' => 10, 'offset' => 0],
+            'rank' => ['type' => 'bm25'],
+            'select' => ['keys' => ['title', 'content']]
+        ]
+    ]
+);
+```
+
+### Database Management
+
+ChromaDB v2 supports multiple databases within a tenant for logical data separation:
+
+```php
+// Create a new database
+$chromadb->database()->create(name: 'production');
+
+// Get database information
+$response = $chromadb->database()->get(database: 'production');
+
+// List all databases in the current tenant
+$databases = $chromadb->database()->list();
+
+// List databases with pagination
+$databases = $chromadb->database()->list(
+    limit: 10,
+    offset: 0
+);
+
+// Delete a database
+$chromadb->database()->delete(database: 'old_database');
+
+// Work with a specific database
+$productionDb = $chromadb->withDatabase('production');
+$stagingDb = $chromadb->withDatabase('staging');
+```
+
+### Tenant Management
+
+Manage tenants for multi-tenancy isolation:
+
+```php
+// Create a new tenant
+$chromadb->tenant()->create(name: 'customer_acme');
+
+// Get tenant information
+$response = $chromadb->tenant()->get(tenant: 'customer_acme');
+
+// Update tenant configuration
+$chromadb->tenant()->update(
+    tenantName: 'customer_acme',
+    resourceName: 'acme-corp-resource'
+);
+```
+
+### Server API
+
+Monitor and manage the ChromaDB server:
+
+```php
+// Check server health
+$response = $chromadb->server()->healthcheck();
+
+// Get heartbeat (nanosecond timestamp)
+$response = $chromadb->server()->heartbeat();
+
+// Get server version
+$version = $chromadb->server()->version();
+
+// Get pre-flight checks information
+$response = $chromadb->server()->preFlightChecks();
+
+// Get current user identity and permissions
+$response = $chromadb->server()->identity();
+$userId = $response->json('user_id');
+$tenant = $response->json('tenant');
+$databases = $response->json('databases');
+
+// Reset the server (⚠️ WARNING: Deletes all data)
+$success = $chromadb->server()->reset();
 ```
 
 ### Multi-Tenancy
