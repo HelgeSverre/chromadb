@@ -1,4 +1,4 @@
-.PHONY: help install dev test clean
+.PHONY: help install dev test test-laravel clean
 
 # Colors
 GREEN  := \033[0;32m
@@ -18,5 +18,9 @@ dev: ## Start ChromaDB in Docker
 test: ## Run tests
 	@composer test
 
-clean: ## Stop Docker and remove volumes
+test-laravel: ## Test Laravel integration across versions 10, 11, 12
+	@./test-laravel-install.sh
+
+clean: ## Stop Docker, remove volumes and test directories
 	@docker compose down -v
+	@rm -rf wip
