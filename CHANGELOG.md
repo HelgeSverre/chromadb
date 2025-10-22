@@ -10,28 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Laravel 12 Support** - Added compatibility with Laravel 12.x
-  - Updated `orchestra/testbench` to support `^8.8 || ^9.0 || ^10.0`
-  - Supports Laravel 10.x, 11.x, and 12.x
-  - Laravel 12 released February 24, 2025 with zero breaking changes
+    - Updated `orchestra/testbench` to support `^8.8 || ^9.0 || ^10.0`
+    - Supports Laravel 10.x, 11.x, and 12.x
+    - Laravel 12 released February 24, 2025 with zero breaking changes
 
 ### Changed
 
 - **Embedding Provider Documentation** - Significantly enhanced documentation
-  - Added complete documentation for all 5 embedding providers
-  - Direct instantiation examples for each provider (OpenAI, Voyage AI, Mistral AI, Jina AI, Ollama)
-  - Factory method examples using `Embeddings` class
-  - Constructor parameter documentation with defaults
-  - Added guide for creating custom embedding functions
-  - Documented `EmbeddingFunction` interface
+    - Added complete documentation for all 5 embedding providers
+    - Direct instantiation examples for each provider (OpenAI, Voyage AI, Mistral AI, Jina AI, Ollama)
+    - Factory method examples using `Embeddings` class
+    - Constructor parameter documentation with defaults
+    - Added guide for creating custom embedding functions
+    - Documented `EmbeddingFunction` interface
 
 - **Version Compatibility** - Updated ChromaDB server version range
-  - Changed from `v1.0.0+` to `1.0.0 - 1.1.x` for better clarity
-  - Latest tested ChromaDB server version: 1.1.1
+    - Changed from `v1.0.0+` to `1.0.0 - 1.1.x` for better clarity
+    - Latest tested ChromaDB server version: 1.1.1
 
 - **Documentation** - General improvements
-  - Added alternative package mention ([CodeWithKyrian/chromadb-php](https://github.com/CodeWithKyrian/chromadb-php))
-  - Removed internal API verification report from README
-  - Added project-specific guidelines in `claude.md`
+    - Added alternative package mention ([CodeWithKyrian/chromadb-php](https://github.com/CodeWithKyrian/chromadb-php))
+    - Removed internal API verification report from README
+    - Added project-specific guidelines in `claude.md`
 
 ### Fixed
 
@@ -49,20 +49,22 @@ This is a major release that implements complete support for the ChromaDB v2 API
 ### 🚀 Added
 
 #### Multi-Tenancy & Database Management
+
 - **Multi-tenancy support** with tenant and database isolation
 - `withTenant()` method for tenant context switching
 - `withDatabase()` method for database context switching
 - **Tenant Management API:**
-  - `Tenant::create()` - Create new tenants
-  - `Tenant::get()` - Retrieve tenant information
-  - `Tenant::update()` - Update tenant configuration
+    - `Tenant::create()` - Create new tenants
+    - `Tenant::get()` - Retrieve tenant information
+    - `Tenant::update()` - Update tenant configuration
 - **Database Management API:**
-  - `Database::create()` - Create new databases
-  - `Database::get()` - Get database information
-  - `Database::list()` - List all databases with pagination
-  - `Database::delete()` - Delete databases
+    - `Database::create()` - Create new databases
+    - `Database::get()` - Get database information
+    - `Database::list()` - List all databases with pagination
+    - `Database::delete()` - Delete databases
 
 #### Enhanced Collections API
+
 - `Collections::list()` - List all collections with pagination
 - `Collections::fork()` - Fork/copy existing collections
 - `Collections::getByCrn()` - Get collection by Collection Resource Name (CRN)
@@ -70,6 +72,7 @@ This is a major release that implements complete support for the ChromaDB v2 API
 - Enhanced `Collections::update()` with `newMetadata` and `newConfiguration` support
 
 #### Enhanced Items API
+
 - `Items::search()` - Hybrid search with multiple search strategies
 - `Items::addWithEmbeddings()` - Automatic embedding generation when adding items
 - `Items::queryWithText()` - Query using text with automatic embedding generation
@@ -77,6 +80,7 @@ This is a major release that implements complete support for the ChromaDB v2 API
 - Support for `uris` parameter across add/update/upsert operations
 
 #### Server API Methods
+
 - `Server::healthcheck()` - Check server health and readiness
 - `Server::identity()` - Get current user identity and permissions
 - `Server::heartbeat()` - Get nanosecond heartbeat timestamp
@@ -85,6 +89,7 @@ This is a major release that implements complete support for the ChromaDB v2 API
 - `Server::reset()` - Reset server (with proper warnings)
 
 #### Embedding Providers
+
 - **OpenAI** embeddings support (text-embedding-3-small, text-embedding-3-large, ada-002)
 - **Voyage AI** embeddings support (voyage-3.5, voyage-3-large, voyage-code-3, domain-specific models)
 - **Mistral AI** embeddings support (mistral-embed)
@@ -94,12 +99,14 @@ This is a major release that implements complete support for the ChromaDB v2 API
 - Named constructor methods: `Embeddings::openai()`, `Embeddings::voyage()`, etc.
 
 #### Configuration & Environment
+
 - Comprehensive `config/chromadb.php` with embedding provider configuration
 - Default tenant and database configuration
 - Full `.env` variable documentation
 - Environment variable examples for all providers
 
 #### Documentation
+
 - Complete API documentation for all 29 endpoints
 - Database Management section
 - Tenant Management section
@@ -110,6 +117,7 @@ This is a major release that implements complete support for the ChromaDB v2 API
 - All examples verified against v2 specification
 
 #### Testing
+
 - Comprehensive test suite covering all 29 endpoints
 - `DatabaseManagementTest` for database operations
 - `TenantManagementTest` for tenant operations
@@ -121,54 +129,63 @@ This is a major release that implements complete support for the ChromaDB v2 API
 ### ⚠️ Breaking Changes
 
 #### Return Type Changes
-- **`Collections::count()`** now returns `int` instead of `Response`
-  ```php
-  // v1
-  $response = $chromadb->collections()->count();
-  $count = (int) $response->body();
 
-  // v2
-  $count = $chromadb->collections()->count(); // Returns int directly
-  ```
+- **`Collections::count()`** now returns `int` instead of `Response`
+
+    ```php
+    // v1
+    $response = $chromadb->collections()->count();
+    $count = (int) $response->body();
+
+    // v2
+    $count = $chromadb->collections()->count(); // Returns int directly
+    ```
 
 - **`Items::count()`** now returns `int` instead of `Response`
-  ```php
-  // v1
-  $response = $chromadb->items()->count($collectionId);
-  $count = (int) $response->body();
 
-  // v2
-  $count = $chromadb->items()->count($collectionId); // Returns int directly
-  ```
+    ```php
+    // v1
+    $response = $chromadb->items()->count($collectionId);
+    $count = (int) $response->body();
+
+    // v2
+    $count = $chromadb->items()->count($collectionId); // Returns int directly
+    ```
 
 #### Metadata Constraints
-- **v2 API only supports scalar values in metadata** (no nested arrays)
-  ```php
-  // v1 - Arrays allowed (no longer works)
-  $metadata = ['tags' => ['php', 'laravel', 'vector-db']];
 
-  // v2 - Only scalars allowed
-  $metadata = ['tags' => 'php, laravel, vector-db'];
-  ```
+- **v2 API only supports scalar values in metadata** (no nested arrays)
+
+    ```php
+    // v1 - Arrays allowed (no longer works)
+    $metadata = ['tags' => ['php', 'laravel', 'vector-db']];
+
+    // v2 - Only scalars allowed
+    $metadata = ['tags' => 'php, laravel, vector-db'];
+    ```
 
 #### Embedding Format Requirements
+
 - Embeddings **must be numeric vectors** (arrays of floats)
 - String embeddings are no longer accepted
-  ```php
-  // Wrong - String embeddings
-  embeddings: ['embedding1', 'embedding2']
 
-  // Correct - Numeric vectors
-  embeddings: [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
-  ```
+    ```php
+    // Wrong - String embeddings
+    embeddings: ['embedding1', 'embedding2']
+
+    // Correct - Numeric vectors
+    embeddings: [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+    ```
 
 #### Configuration Changes
+
 - **Host configuration now requires protocol**
-  - Before: `'host' => 'localhost'`
-  - After: `'host' => 'http://localhost'`
-  - Prevents malformed URLs in Laravel service provider
+    - Before: `'host' => 'localhost'`
+    - After: `'host' => 'http://localhost'`
+    - Prevents malformed URLs in Laravel service provider
 
 #### API Endpoint Changes
+
 - All v2 endpoints now use tenant/database path parameters
 - Default values: `default_tenant` and `default_database`
 - CRN (Collection Resource Name) format introduced for global collection access
@@ -176,18 +193,21 @@ This is a major release that implements complete support for the ChromaDB v2 API
 ### 🔄 Changed
 
 #### Embeddings
+
 - Renamed `EmbeddingFactory` to `Embeddings` class
 - Renamed `embed()` method to `generate()`
 - Improved embedding provider configuration structure
 - Updated model defaults (e.g., Voyage AI now defaults to `voyage-3.5`)
 
 #### Request Classes
+
 - All 29 request classes updated for v2 API compatibility
 - Enhanced parameter validation
 - Proper handling of tenant/database context
 - Query parameters separated from body parameters where appropriate
 
 #### PHP Version Requirement
+
 - **Minimum PHP version: 8.2+** (updated from 8.1)
 
 ### 🐛 Fixed
@@ -231,6 +251,7 @@ Previous versions used the deprecated ChromaDB v1 API. See git history for detai
 ### Migration from v1 to v2
 
 For a complete migration guide, see the [API Verification Report](./docs/API_VERIFICATION_REPORT.md) which includes:
+
 - All breaking changes documented
 - Before/after code examples
 - Parameter mapping reference

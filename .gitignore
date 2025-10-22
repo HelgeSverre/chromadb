@@ -21,3 +21,6 @@ docs/trash/
 
 # Docker volumns, for testing the package against real service.
 volumes/
+
+# Test directories (temporary Laravel installations)
+wip/

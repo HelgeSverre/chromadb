@@ -6,8 +6,10 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/chromadb.svg?style=flat-square)](https://packagist.org/packages/helgesverre/chromadb)
 [![ChromaDB v2 API](https://img.shields.io/badge/ChromaDB-v2%20API-blue.svg)](https://docs.trychroma.com/)
 
-[ChromaDB](https://github.com/chroma-core/chroma) is an open-source vector database that allows you to store and query
-vector embeddings. This package provides a PHP client for the ChromaDB v2 API.
+A **framework-agnostic PHP client** for the [ChromaDB](https://github.com/chroma-core/chroma) v2 API. Works with any PHP 8.2+ project, with **optional Laravel integration** for enhanced developer experience.
+
+> **Use Anywhere:** This package works in vanilla PHP, Symfony, WordPress, or any PHP framework. <br>
+> Laravel features (config, facades, service provider) are completely optional.
 
 > **Looking for an alternative?** Check out [CodeWithKyrian/chromadb-php](https://github.com/CodeWithKyrian/chromadb-php) for another ChromaDB PHP client.
 
@@ -23,103 +25,20 @@ This package supports **ChromaDB v2 API**. The v1 API has been deprecated by Chr
 
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
 composer require helgesverre/chromadb
 ```
 
-### Laravel Configuration
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="chromadb-config"
-```
-
-This is the contents of the published `config/chromadb.php` file:
-
-```php
-return [
-    'token' => env('CHROMADB_TOKEN'),
-    'host' => env('CHROMADB_HOST', 'http://localhost'),
-    'port' => env('CHROMADB_PORT', '8000'),
-
-    'tenant' => env('CHROMADB_TENANT', 'default_tenant'),
-    'database' => env('CHROMADB_DATABASE', 'default_database'),
-
-    'embeddings' => [
-        'default' => env('CHROMADB_EMBEDDING_PROVIDER', 'openai'),
-        'providers' => [
-            'openai' => [
-                'api_key' => env('OPENAI_API_KEY'),
-                'model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
-            ],
-            'voyage' => [
-                'api_key' => env('VOYAGE_API_KEY'),
-                'model' => env('VOYAGE_EMBEDDING_MODEL', 'voyage-3.5'),
-            ],
-            'mistral' => [
-                'api_key' => env('MISTRAL_API_KEY'),
-                'model' => env('MISTRAL_EMBEDDING_MODEL', 'mistral-embed'),
-            ],
-            'jina' => [
-                'api_key' => env('JINA_API_KEY'),
-                'model' => env('JINA_EMBEDDING_MODEL', 'jina-embeddings-v3'),
-            ],
-            'ollama' => [
-                'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
-                'model' => env('OLLAMA_EMBEDDING_MODEL', 'all-minilm'),
-            ],
-        ],
-    ],
-];
-```
-
-### Environment Variables
-
-Add these variables to your `.env` file:
-
-```env
-# ChromaDB Connection
-CHROMADB_TOKEN=test-token-chroma-local-dev
-CHROMADB_HOST=http://localhost
-CHROMADB_PORT=8000
-
-# Multi-tenancy (optional)
-CHROMADB_TENANT=default_tenant
-CHROMADB_DATABASE=default_database
-
-# Embedding Provider (optional)
-CHROMADB_EMBEDDING_PROVIDER=openai
-
-# OpenAI Configuration (if using OpenAI embeddings)
-OPENAI_API_KEY=your-openai-api-key
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-
-# Voyage AI Configuration (if using Voyage embeddings)
-VOYAGE_API_KEY=your-voyage-api-key
-VOYAGE_EMBEDDING_MODEL=voyage-3.5
-
-# Mistral AI Configuration (if using Mistral embeddings)
-MISTRAL_API_KEY=your-mistral-api-key
-MISTRAL_EMBEDDING_MODEL=mistral-embed
-
-# Jina AI Configuration (if using Jina embeddings)
-JINA_API_KEY=your-jina-api-key
-JINA_EMBEDDING_MODEL=jina-embeddings-v3
-
-# Ollama Configuration (if using local Ollama embeddings)
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_EMBEDDING_MODEL=all-minilm
-```
-
 ## Quick Start
+
+### Basic Usage (Any PHP Project)
 
 ```php
 use HelgeSverre\Chromadb\Chromadb;
 
-// Initialize client
+// Initialize client with direct instantiation
 $chromadb = new Chromadb(
     token: 'test-token-chroma-local-dev',
     host: 'http://localhost',
@@ -130,7 +49,7 @@ $chromadb = new Chromadb(
 $response = $chromadb->collections()->create('my_collection');
 $collectionId = $response->json('id');
 
-// Add documents
+// Add documents with embeddings
 $chromadb->items()->add(
     collectionId: $collectionId,
     ids: ['doc1', 'doc2'],
@@ -138,13 +57,26 @@ $chromadb->items()->add(
     documents: ['Document 1', 'Document 2']
 );
 
-// Query
+// Query the collection
 $results = $chromadb->items()->query(
     collectionId: $collectionId,
     queryEmbeddings: [[0.1, 0.2, 0.3]],
     nResults: 10
 );
 ```
+
+### Using with Laravel (Optional)
+
+If you're using Laravel, you can leverage the Facade and config-based setup:
+
+```php
+use HelgeSverre\Chromadb\Facades\Chromadb;
+
+// Using the Facade (configuration loaded from config/chromadb.php)
+$response = Chromadb::client()->collections()->create('my_collection');
+```
+
+See the [Laravel Integration](#laravel-integration-optional) section below for full setup details, including dependency injection.
 
 ## Usage
 
@@ -353,9 +285,146 @@ $productionClient = $chromadb
     ->withDatabase('production');
 ```
 
+## Laravel Integration (Optional)
+
+If you're using Laravel, this package provides additional features for enhanced developer experience through the service provider, config file, and Facade.
+
+### Publishing Configuration
+
+Publish the config file with:
+
+```bash
+php artisan vendor:publish --tag="chromadb-config"
+```
+
+This creates `config/chromadb.php` with the following structure:
+
+```php
+return [
+    'token' => env('CHROMADB_TOKEN'),
+    'host' => env('CHROMADB_HOST', 'http://localhost'),
+    'port' => env('CHROMADB_PORT', '8000'),
+
+    'tenant' => env('CHROMADB_TENANT', 'default_tenant'),
+    'database' => env('CHROMADB_DATABASE', 'default_database'),
+
+    'embeddings' => [
+        'default' => env('CHROMADB_EMBEDDING_PROVIDER', 'openai'),
+        'providers' => [
+            'openai' => [
+                'api_key' => env('OPENAI_API_KEY'),
+                'model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
+            ],
+            'voyage' => [
+                'api_key' => env('VOYAGE_API_KEY'),
+                'model' => env('VOYAGE_EMBEDDING_MODEL', 'voyage-3.5'),
+            ],
+            'mistral' => [
+                'api_key' => env('MISTRAL_API_KEY'),
+                'model' => env('MISTRAL_EMBEDDING_MODEL', 'mistral-embed'),
+            ],
+            'jina' => [
+                'api_key' => env('JINA_API_KEY'),
+                'model' => env('JINA_EMBEDDING_MODEL', 'jina-embeddings-v3'),
+            ],
+            'ollama' => [
+                'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
+                'model' => env('OLLAMA_EMBEDDING_MODEL', 'all-minilm'),
+            ],
+        ],
+    ],
+];
+```
+
+### Environment Variables
+
+Add these variables to your `.env` file:
+
+```env
+# ChromaDB Connection
+CHROMADB_TOKEN=test-token-chroma-local-dev
+CHROMADB_HOST=http://localhost
+CHROMADB_PORT=8000
+
+# Multi-tenancy (optional)
+CHROMADB_TENANT=default_tenant
+CHROMADB_DATABASE=default_database
+
+# Embedding Provider (optional)
+CHROMADB_EMBEDDING_PROVIDER=openai
+
+# OpenAI Configuration (if using OpenAI embeddings)
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+
+# Voyage AI Configuration (if using Voyage embeddings)
+VOYAGE_API_KEY=your-voyage-api-key
+VOYAGE_EMBEDDING_MODEL=voyage-3.5
+
+# Mistral AI Configuration (if using Mistral embeddings)
+MISTRAL_API_KEY=your-mistral-api-key
+MISTRAL_EMBEDDING_MODEL=mistral-embed
+
+# Jina AI Configuration (if using Jina embeddings)
+JINA_API_KEY=your-jina-api-key
+JINA_EMBEDDING_MODEL=jina-embeddings-v3
+
+# Ollama Configuration (if using local Ollama embeddings)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_EMBEDDING_MODEL=all-minilm
+```
+
+### Using the Facade
+
+The package automatically registers a Facade for convenient static access:
+
+```php
+use HelgeSverre\Chromadb\Facades\Chromadb;
+
+// Access through Facade (uses config automatically)
+$collections = Chromadb::client()->collections()->list();
+$response = Chromadb::client()->collections()->create('my_collection');
+```
+
+### Dependency Injection
+
+The service provider automatically binds the client to the container:
+
+```php
+use HelgeSverre\Chromadb\Chromadb;
+
+class MyController
+{
+    public function __construct(private Chromadb $chromadb)
+    {
+        // $chromadb is automatically configured from config/chromadb.php
+    }
+
+    public function index()
+    {
+        $collections = $this->chromadb->collections()->list();
+        return view('collections.index', compact('collections'));
+    }
+}
+```
+
+### Using Config-Based Embeddings (Laravel Only)
+
+> **Note:** The `Embeddings::fromConfig()` method requires Laravel and reads from your config file.
+
+```php
+use HelgeSverre\Chromadb\Embeddings\Embeddings;
+
+// Create embedder from Laravel config
+$embedder = Embeddings::fromConfig('openai');
+
+// Or use the default provider from config
+$embedder = Embeddings::fromConfig(); // Uses CHROMADB_EMBEDDING_PROVIDER
+```
+
 ## Embedding Providers
 
-This package includes built-in support for automatic embedding generation using various providers. Instead of manually generating embeddings, you can configure an embedding provider and let the package handle it automatically.
+This package includes built-in support for automatic embedding generation using various providers. All embedding classes work in any PHP project - Laravel is not required.
 
 ### Supported Providers
 
@@ -365,45 +434,50 @@ This package includes built-in support for automatic embedding generation using 
 - **Jina AI** - `jina-embeddings-v3`, `jina-embeddings-v2-base-en`, `jina-embeddings-v2-small-en`, `jina-clip-v2`
 - **Ollama** - Local embeddings with any Ollama model
 
-### Configuration
+### Direct Usage (Any PHP Project)
 
-Configure your preferred embedding provider in your `.env` file:
-
-```env
-CHROMADB_EMBEDDING_PROVIDER=openai
-OPENAI_API_KEY=your-api-key-here
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-```
-
-### Usage with Embedding Provider
-
-When you add items with documents but without embeddings, the configured provider will automatically generate them:
+Create embedding providers directly without any framework dependencies:
 
 ```php
 use HelgeSverre\Chromadb\Embeddings\Embeddings;
 
-// Create embedder from config
-$embedder = Embeddings::fromConfig('openai');
-
-// Or create directly with parameters
+// Create embedder with direct instantiation
 $embedder = Embeddings::openai(
-    apiKey: config('chromadb.embeddings.providers.openai.api_key'),
+    apiKey: 'sk-your-api-key',
     model: 'text-embedding-3-small'
 );
 
+// Generate embeddings
 $documents = [
     'The quick brown fox jumps over the lazy dog',
-    'Laravel is a web application framework with expressive, elegant syntax',
+    'Vector databases enable semantic search',
 ];
 
 $embeddings = $embedder->generate($documents);
 
+// Add to ChromaDB
 $chromadb->items()->add(
     collectionId: $collectionId,
     ids: ['doc1', 'doc2'],
     embeddings: $embeddings,
     documents: $documents
 );
+```
+
+### With Laravel Config (Laravel Only)
+
+If using Laravel, you can configure embeddings in your config file and load them with `fromConfig()`:
+
+```php
+use HelgeSverre\Chromadb\Embeddings\Embeddings;
+
+// Create embedder from Laravel config (requires config/chromadb.php)
+$embedder = Embeddings::fromConfig('openai');
+
+// Or use default provider from config
+$embedder = Embeddings::fromConfig(); // Uses CHROMADB_EMBEDDING_PROVIDER
+
+$embeddings = $embedder->generate($documents);
 ```
 
 ### Automatic Embedding Generation
@@ -436,7 +510,7 @@ $results = $chromadb->items()->queryWithText(
 
 #### Available Embedding Providers
 
-All providers implement the `EmbeddingFunction` interface and can be used interchangeably. Each provider can be instantiated directly or using the `Embeddings` factory class.
+All providers implement the `EmbeddingFunction` interface and work in any PHP 8.2+ project (Laravel not required). Each provider can be instantiated directly or using the `Embeddings` factory class.
 
 ##### 1. OpenAI Embeddings
 
@@ -562,7 +636,7 @@ $embedder = Embeddings::ollama(
 
 #### Creating Custom Embedding Functions
 
-You can create your own embedding provider by implementing the `EmbeddingFunction` interface:
+You can create your own embedding provider by implementing the `EmbeddingFunction` interface. This works in any PHP project:
 
 ```php
 use HelgeSverre\Chromadb\Embeddings\EmbeddingFunction;
@@ -626,9 +700,11 @@ interface EmbeddingFunction
 
 ## Example: Semantic Search with ChromaDB and OpenAI Embeddings
 
-This example demonstrates how to perform a semantic search in ChromaDB using embeddings generated from OpenAI.
+This example demonstrates how to perform a semantic search in ChromaDB using embeddings generated from OpenAI. This works in any PHP project.
 
 Full code available in [SemanticSearchTest.php](./tests/Feature/SemanticSearchTest.php).
+
+> **Note:** This example uses the OpenAI PHP client. You can use any method to generate embeddings - this package's embedding providers, direct API calls, or any other embedding service.
 
 ### Prepare Your Data
 
@@ -739,7 +815,7 @@ foreach ($metadatas as $index => $metadata) {
 
 ## Running ChromaDB in Docker
 
-To quickly get started with ChromaDB, you can run it in Docker
+To quickly get started with ChromaDB (works with any PHP setup), you can run it in Docker:
 
 ```bash
 # Download the docker-compose.yml file
