@@ -5,6 +5,42 @@ All notable changes to `chromadb` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-10-28
+
+### Added
+
+- **Comprehensive Test Suite** - Achieved 80% code coverage with 139 new tests
+    - **Unit Tests (116 tests)**: Core client, request classes, validation, embeddings factory, service provider
+    - **Feature Tests (15 tests)**: Error handling, filter-based deletion, pagination edge cases
+    - **Integration Tests (8 tests)**: Multi-tenancy workflows, tenant/database overrides
+    - Total: 271 tests passing with 784 assertions
+    - Test execution time: ~26-32 seconds for full suite
+
+- **Developer Tooling** - Migrated from Makefile to justfile
+    - Improved command organization with groups (setup, docker, test, workflow)
+    - Built-in help system with `just --list`
+    - Inline documentation for each command
+    - Environment variable loading from .env
+    - Enhanced cleanup command for Docker volumes and build artifacts
+
+### Fixed
+
+- **Test Documentation** - Improved skip messages for cloud-only features
+    - Hybrid Search endpoint (not implemented in ChromaDB v1.0.x local)
+    - Fork Collection (Chroma Cloud exclusive)
+    - Get Collection by CRN (version-dependent, requires v1.0.21+)
+    - All skip messages now include accurate version info and context
+
+### Changed
+
+- **Development Workflow** - Streamlined with justfile commands
+    - `just workflow` - Full development cycle (docker, install, test)
+    - `just quick` - Quick test cycle (docker, test)
+    - `just test-laravel` - Test Laravel integration across versions 10, 11, 12
+    - `just clean` - Enhanced cleanup of Docker volumes and build artifacts
+
+---
+
 ## [2.1.1] - 2025-10-22
 
 ### Fixed
