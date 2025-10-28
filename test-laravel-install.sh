@@ -204,7 +204,7 @@ for dir in "${TESTED_DIRS[@]}"; do
     echo "  - $dir"
 done
 echo ""
-echo "To clean up: rm -rf wip"
+echo "To clean up: rm -rf wip or run just clean"
 echo ""
 
 # Exit with error if any tests failed
