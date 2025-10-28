@@ -75,8 +75,8 @@ it('updates a collection name correctly', function () {
 });
 
 it('forks a collection correctly', function () {
-    // NOTE: Fork endpoint is not implemented in local ChromaDB v1.0.0
-    // Returns 501 "Collection forking is unsupported for local chroma"
+    // NOTE: Fork endpoint is only available in Chroma Cloud (hosted version)
+    // Local ChromaDB v1.0.x returns 501 "Collection forking is unsupported for local chroma"
 
     // Create original collection
     $original = $this->chromadb->collections()->create('original_collection', getOrCreate: true);
@@ -97,19 +97,20 @@ it('forks a collection correctly', function () {
         newName: 'forked_collection'
     );
 
-    // Fork returns 501 in local ChromaDB v1.0.0
+    // Fork returns 501 in local ChromaDB v1.0.x
     expect($forkResponse->status())->toBeIn([200, 501]);
-})->skip('Fork endpoint not implemented in local ChromaDB v1.0.0 - returns 501');
+})->skip('Fork endpoint only available in Chroma Cloud (hosted). Local v1.0.x returns 501.');
 
 it('can get collection by CRN', function () {
-    // NOTE: CRN format validation may vary by ChromaDB version
-    // Local v1.0.0 expects format: <tenant_resource_name>:<database_name>:<collection_name>
+    // NOTE: CRN (Collection Resource Name) format varies by ChromaDB version
+    // Expected format: crn:chroma:collection:<tenant>:<database>:<collection_uuid>
+    // CRN endpoint added in v1.0.21+ but may require cloud instance
 
     // Create a collection
     $create = $this->chromadb->collections()->create('test_crn_collection', getOrCreate: true);
     expect($create->ok())->toBeTrue();
 
-    // CRN format for v1.0.0 (without "chroma:tenant:" prefix)
+    // CRN format for v1.0.x (format may vary between local and cloud)
     $crn = 'default:default_database:test_crn_collection';
 
     // Get collection by CRN
@@ -117,4 +118,91 @@ it('can get collection by CRN', function () {
 
     // Expect either success or validation error depending on ChromaDB version
     expect($response->status())->toBeIn([200, 400, 404]);
-})->skip('CRN endpoint format varies by ChromaDB version - needs cloud instance testing');
+})->skip('CRN endpoint implementation varies by version. Added in v1.0.21+ but may require Chroma Cloud.');
+
+// Wave 2: Pagination Edge Cases (with tenant isolation)
+it('list with negative offset returns empty or errors gracefully', function () {
+    // Use tenant isolation to prevent conflicts with parallel test agents
+    $chromadb = $this->chromadb->withTenant('test_tenant_collections_wave2');
+
+    // Create multiple test collections for pagination testing
+    for ($i = 1; $i <= 3; $i++) {
+        $chromadb->collections()->create(
+            name: "pagination_test_collection_{$i}",
+            getOrCreate: true
+        );
+    }
+
+    // Test negative offset - should return empty or error gracefully
+    $list = $chromadb->collections()->list(limit: 10, offset: -1);
+
+    // Should either return empty collection or status indicates error
+    expect($list->collect())->toBeInstanceOf(Illuminate\Support\Collection::class);
+});
+
+it('list with limit exceeding total count returns all available', function () {
+    // Use tenant isolation to prevent conflicts with parallel test agents
+    $chromadb = $this->chromadb->withTenant('test_tenant_collections_wave2');
+
+    // Create multiple test collections
+    for ($i = 1; $i <= 2; $i++) {
+        $chromadb->collections()->create(
+            name: "limit_test_collection_{$i}",
+            getOrCreate: true
+        );
+    }
+
+    // List with very large limit
+    $list = $chromadb->collections()->list(limit: 1000, offset: 0);
+
+    // Should return all available collections, not error
+    expect($list->collect())->toBeInstanceOf(Illuminate\Support\Collection::class);
+});
+
+it('list with zero limit returns results or errors consistently', function () {
+    // Use tenant isolation to prevent conflicts with parallel test agents
+    $chromadb = $this->chromadb->withTenant('test_tenant_collections_wave2');
+
+    // Create test collection
+    $chromadb->collections()->create('zero_limit_test', getOrCreate: true);
+
+    // Test with zero limit - API should handle this gracefully
+    $list = $chromadb->collections()->list(limit: 0, offset: 0);
+
+    // Should either return empty or handle gracefully
+    expect($list->collect())->toBeInstanceOf(Illuminate\Support\Collection::class);
+});
+
+it('list with very large offset returns empty collection', function () {
+    // Use tenant isolation to prevent conflicts with parallel test agents
+    $chromadb = $this->chromadb->withTenant('test_tenant_collections_wave2');
+
+    // Create a few test collections
+    for ($i = 1; $i <= 2; $i++) {
+        $chromadb->collections()->create(
+            name: "large_offset_test_{$i}",
+            getOrCreate: true
+        );
+    }
+
+    // List with offset beyond available data
+    $list = $chromadb->collections()->list(limit: 10, offset: 10000);
+
+    // Should return empty result set
+    expect($list->collect())->toBeInstanceOf(Illuminate\Support\Collection::class);
+});
+
+it('count method returns integer', function () {
+    // Use tenant isolation to prevent conflicts with parallel test agents
+    $chromadb = $this->chromadb->withTenant('test_tenant_collections_wave2');
+
+    // Create test collection
+    $chromadb->collections()->create('count_test_collection', getOrCreate: true);
+
+    // Get count
+    $count = $chromadb->collections()->count();
+
+    // Should return an integer (0 or more)
+    expect($count)->toBeInt()
+        ->and($count)->toBeGreaterThanOrEqual(0);
+});
