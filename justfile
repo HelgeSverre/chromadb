@@ -30,6 +30,9 @@ clean:
     @echo "Stopping Docker and cleaning up..."
     docker compose down -v
     @rm -rf wip
+    @rm -rf volumes
+    @rm -rf .phpunit.cache
+    @rm -rf build
     @echo "Cleanup complete!"
 
 # === Testing ===
