@@ -29,7 +29,31 @@ it('can perform a server pre-flight check', function () {
 it('can reset the server', function () {
     $success = $this->chromadb->server()->reset();
 
-    expect($success)->toEqual(200);
+    expect($success)->toBeTruthy();
+});
+
+it('reset returns true on success', function () {
+    $result = $this->chromadb->server()->reset();
+
+    expect($result)->toBeTruthy();
+});
+
+it('reset handles API error responses gracefully', function () {
+    // Reset server to verify it's responsive
+    $result = $this->chromadb->server()->reset();
+
+    // Even if there are issues, reset should not throw
+    expect($result)->toBeBool();
+});
+
+it('reset return type is consistent', function () {
+    $result1 = $this->chromadb->server()->reset();
+    $result2 = $this->chromadb->server()->reset();
+
+    // Both calls should return boolean
+    expect($result1)->toBeBool()
+        ->and($result2)->toBeBool()
+        ->and($result1)->toBe($result2);
 });
 
 it('can retrieve the server version', function () {

@@ -98,3 +98,34 @@ function mockOllamaResponse(int $dimensions = 384): array
         ],
     ];
 }
+
+function callProtectedMethod($object, $method, ...$args)
+{
+    $reflection = new ReflectionClass($object);
+    $method = $reflection->getMethod($method);
+    $method->setAccessible(true);
+
+    return $method->invokeArgs($object, $args);
+}
+
+// Request test helpers
+function getRequestBody($request)
+{
+    $reflection = new ReflectionObject($request);
+    $method = $reflection->getMethod('defaultBody');
+    $method->setAccessible(true);
+
+    return $method->invoke($request);
+}
+
+function getRequestQuery($request)
+{
+    $reflection = new ReflectionObject($request);
+    if (! $reflection->hasMethod('defaultQuery')) {
+        return [];
+    }
+    $method = $reflection->getMethod('defaultQuery');
+    $method->setAccessible(true);
+
+    return $method->invoke($request);
+}
