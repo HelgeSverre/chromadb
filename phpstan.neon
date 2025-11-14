@@ -1,0 +1,11 @@
+parameters:
+    paths:
+        - src
+    level: 5
+    ignoreErrors:
+        # Saloon Connector custom methods (getTenant, getDatabase, getEmbeddingFunction)
+        - '#Call to an undefined method Saloon\\Http\\Connector::(getTenant|getDatabase|getEmbeddingFunction)\(\)#'
+        # Guzzle exception type narrowing
+        - '#Call to an undefined method GuzzleHttp\\Exception\\GuzzleException::getResponse\(\)#'
+        # Static return type in exception factory methods
+        - '#Method HelgeSverre\\Chromadb\\Exceptions\\EmbeddingException::.* should return static\(.*\) but returns#'

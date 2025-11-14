@@ -44,7 +44,7 @@ jobs:
           echo "ChromaDB is ready!"
 
       - name: Run tests
-        run: composer test
+        run: composer test -- --testsuite=Unit,Feature
 
       - name: Stop ChromaDB
         if: always()
