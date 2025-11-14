@@ -101,24 +101,29 @@ it('forks a collection correctly', function () {
     expect($forkResponse->status())->toBeIn([200, 501]);
 })->skip('Fork endpoint only available in Chroma Cloud (hosted). Local v1.0.x returns 501.');
 
-it('can get collection by CRN', function () {
-    // NOTE: CRN (Collection Resource Name) format varies by ChromaDB version
-    // Expected format: crn:chroma:collection:<tenant>:<database>:<collection_uuid>
-    // CRN endpoint added in v1.0.21+ but may require cloud instance
+it('can get collection by CRN (future feature)', function () {
+    // NOTE: CRN (Collection Resource Name) endpoint is a new feature added Nov 13, 2025
+    // Not yet available in any released ChromaDB version (will be in version after v1.3.4)
+    //
+    // Expected format: tenant_resource_name:database_name:collection_name
+    // Prerequisite: Tenant must have a resource_name set via SetTenantResourceName API
+    //
+    // When this feature is released, update this test to:
+    // 1. Set tenant resource name using $chromadb->tenant()->setResourceName()
+    // 2. Use CRN format: "resource_name:default_database:collection_name"
+    // 3. Remove the skip() call
 
     // Create a collection
     $create = $this->chromadb->collections()->create('test_crn_collection', getOrCreate: true);
     expect($create->ok())->toBeTrue();
 
-    // CRN format for v1.0.x (format may vary between local and cloud)
-    $crn = 'default:default_database:test_crn_collection';
-
-    // Get collection by CRN
-    $response = $this->chromadb->collections()->getByCrn($crn);
-
-    // Expect either success or validation error depending on ChromaDB version
-    expect($response->status())->toBeIn([200, 400, 404]);
-})->skip('CRN endpoint implementation varies by version. Added in v1.0.21+ but may require Chroma Cloud.');
+    // TODO: When feature is available in released ChromaDB version, uncomment:
+    // $this->chromadb->tenant()->setResourceName('default_tenant', 'my_resource_name');
+    // $crn = 'my_resource_name:default_database:test_crn_collection';
+    // $response = $this->chromadb->collections()->getByCrn($crn);
+    // expect($response->ok())->toBeTrue();
+    // expect($response->json('name'))->toBe('test_crn_collection');
+})->skip('CRN endpoint not yet available in any released ChromaDB version. Feature added Nov 13, 2025, will be in version after v1.3.4.');
 
 // Wave 2: Pagination Edge Cases (with tenant isolation)
 it('list with negative offset returns empty or errors gracefully', function () {

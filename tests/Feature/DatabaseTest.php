@@ -15,8 +15,6 @@ beforeEach(function () {
 it('creates a database correctly', function () {
     $createResponse = $this->chromadb->database()->create('test_database');
 
-    ray($createResponse->json());
-
     expect($createResponse->ok())->toBeTrue();
 });
 
