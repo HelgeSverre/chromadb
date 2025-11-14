@@ -88,6 +88,17 @@ $chromadb->collections()->create(
     name: 'my_collection',
 );
 
+// Create a collection with metadata and configuration
+$chromadb->collections()->create(
+    name: 'my_collection',
+    metadata: ['description' => 'My collection'],
+    configuration: [
+        'hnsw:space' => 'cosine',
+        'hnsw:construction_ef' => 100,
+        'hnsw:M' => 16
+    ]
+);
+
 // Count the number of collections
 $chromadb->collections()->count();
 
@@ -110,6 +121,12 @@ $chromadb->collections()->update(
 
 // List all collections
 $collections = $chromadb->collections()->list();
+
+// List collections with pagination
+$collections = $chromadb->collections()->list(
+    limit: 10,
+    offset: 0
+);
 
 // Fork a collection (create a copy)
 $chromadb->collections()->fork(
@@ -177,6 +194,7 @@ $chromadb->items()->query(
 );
 
 // Hybrid search with multiple search strategies
+// Note: search() requires Chroma Cloud - not available in local ChromaDB
 $chromadb->items()->search(
     collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
     searches: [
@@ -191,6 +209,51 @@ $chromadb->items()->search(
         ]
     ]
 );
+
+// Filtering with where (metadata filters) and whereDocument (content filters)
+
+// Get items by metadata filters
+$chromadb->items()->get(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    where: [
+        'category' => 'technology',
+        'year' => ['$gte' => 2020] // Greater than or equal to 2020
+    ]
+);
+
+// Delete items matching metadata filters
+$chromadb->items()->delete(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    where: [
+        'status' => 'archived',
+        'priority' => ['$lt' => 3] // Less than 3
+    ]
+);
+
+// Delete items matching document content filters
+$chromadb->items()->delete(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    whereDocument: ['$contains' => 'obsolete']
+);
+
+// Combine metadata and document filters
+$chromadb->items()->delete(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    where: ['category' => 'temporary'],
+    whereDocument: ['$contains' => 'draft']
+);
+
+// Query with filters
+$chromadb->items()->query(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    queryEmbeddings: [[0.8, 0.8, 0.8]],
+    where: ['category' => 'articles'],
+    whereDocument: ['$contains' => 'machine learning'],
+    nResults: 10
+);
+
+// Supported filter operators:
+// $eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $and, $or, $not, $contains
 ```
 
 ### Database Management
@@ -314,10 +377,13 @@ return [
             'openai' => [
                 'api_key' => env('OPENAI_API_KEY'),
                 'model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
+                'dimensions' => env('OPENAI_EMBEDDING_DIMENSIONS', null), // Optional: reduce dimensions
+                'organization' => env('OPENAI_ORGANIZATION', null), // Optional: organization ID
             ],
             'voyage' => [
                 'api_key' => env('VOYAGE_API_KEY'),
                 'model' => env('VOYAGE_EMBEDDING_MODEL', 'voyage-3.5'),
+                'input_type' => env('VOYAGE_INPUT_TYPE', 'document'), // 'document' or 'query'
             ],
             'mistral' => [
                 'api_key' => env('MISTRAL_API_KEY'),
@@ -326,6 +392,8 @@ return [
             'jina' => [
                 'api_key' => env('JINA_API_KEY'),
                 'model' => env('JINA_EMBEDDING_MODEL', 'jina-embeddings-v3'),
+                'task' => env('JINA_TASK', null), // Optional: 'retrieval.query', 'retrieval.passage', 'text-matching'
+                'dimensions' => env('JINA_EMBEDDING_DIMENSIONS', null), // Optional: reduce dimensions
             ],
             'ollama' => [
                 'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
@@ -497,14 +565,32 @@ $chromadb = $chromadb->withEmbeddings($embedder);
 $chromadb->items()->addWithEmbeddings(
     collectionId: $collectionId,
     documents: ['Document 1', 'Document 2'],
-    ids: ['doc1', 'doc2']
+    embeddingFunction: null,  // Optional: override default embedding function
+    ids: ['doc1', 'doc2'],    // Optional: auto-generated if null
+    metadatas: [['type' => 'article'], ['type' => 'blog']]  // Optional
 );
 
-// Query with text (automatic embedding)
+// Query with text (automatic embedding) - basic usage
 $results = $chromadb->items()->queryWithText(
     collectionId: $collectionId,
     queryText: 'search query',
     nResults: 10
+);
+
+// Query with text - advanced usage with override and filters
+$mistralEmbedder = new MistralEmbeddings(
+    apiKey: 'your-mistral-key',
+    model: 'mistral-embed'
+);
+
+$results = $chromadb->items()->queryWithText(
+    collectionId: $collectionId,
+    queryText: 'machine learning',
+    embeddingFunction: $mistralEmbedder,  // Override default embedder
+    nResults: 10,
+    include: ['documents', 'metadatas', 'distances'],
+    where: ['category' => 'tech'],
+    whereDocument: ['$contains' => 'AI']
 );
 ```
 
@@ -632,6 +718,59 @@ $embedder = Embeddings::ollama(
 // - nomic-embed-text (high quality)
 // - mxbai-embed-large (larger model)
 // - snowflake-arctic-embed (specialized)
+```
+
+#### Using Helper Functions
+
+For a more functional programming style, the package provides convenient helper functions:
+
+```php
+use function HelgeSverre\Chromadb\Embeddings\embeddings_openai;
+use function HelgeSverre\Chromadb\Embeddings\embeddings_voyage;
+use function HelgeSverre\Chromadb\Embeddings\embeddings_mistral;
+use function HelgeSverre\Chromadb\Embeddings\embeddings_jina;
+use function HelgeSverre\Chromadb\Embeddings\embeddings_ollama;
+
+// Generate embeddings using helper functions
+$embeddings = embeddings_openai(
+    texts: ['Document 1', 'Document 2'],
+    apiKey: 'sk-your-api-key',
+    model: 'text-embedding-3-small'
+);
+
+$embeddings = embeddings_voyage(
+    texts: ['Document 1', 'Document 2'],
+    apiKey: 'your-voyage-key',
+    model: 'voyage-3.5'
+);
+
+$embeddings = embeddings_mistral(
+    texts: ['Document 1', 'Document 2'],
+    apiKey: 'your-mistral-key'
+);
+
+$embeddings = embeddings_jina(
+    texts: ['Document 1', 'Document 2'],
+    apiKey: 'your-jina-key',
+    model: 'jina-embeddings-v3'
+);
+
+$embeddings = embeddings_ollama(
+    texts: ['Document 1', 'Document 2'],
+    model: 'all-minilm',
+    baseUrl: 'http://localhost:11434'
+);
+
+// Use directly with ChromaDB
+$chromadb->items()->add(
+    collectionId: $collectionId,
+    ids: ['doc1', 'doc2'],
+    embeddings: embeddings_openai(
+        texts: ['Document 1', 'Document 2'],
+        apiKey: 'sk-your-api-key'
+    ),
+    documents: ['Document 1', 'Document 2']
+);
 ```
 
 #### Creating Custom Embedding Functions
