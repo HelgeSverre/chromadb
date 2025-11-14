@@ -61,6 +61,9 @@ class Tenant extends BaseResource
      */
     public function setResourceName(string $tenantName, string $resourceName): Response
     {
-        return $this->update($tenantName, $resourceName);
+        return $this->connector->send(new UpdateTenant(
+            tenantName: $tenantName,
+            resourceName: $resourceName
+        ));
     }
 }
