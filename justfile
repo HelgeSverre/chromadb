@@ -49,6 +49,24 @@ test-laravel:
     @echo "Testing Laravel integration..."
     ./test-laravel-install.sh
 
+[group('test')]
+[doc('Test GitHub Actions workflow locally with act (requires act tool)')]
+act-pr:
+    @echo "Running GitHub Actions CI workflow locally..."
+    act pull_request --job tests -P ubuntu-latest=catthehacker/ubuntu:act-latest --matrix php:8.3
+
+[group('test')]
+[doc('Test GitHub Actions code quality checks locally with act')]
+act-quality:
+    @echo "Running code quality checks locally..."
+    act pull_request --job code-quality -P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+[group('test')]
+[doc('Test all GitHub Actions workflows locally')]
+act-all:
+    @echo "Running all GitHub Actions workflows locally..."
+    act pull_request -P ubuntu-latest=catthehacker/ubuntu:act-latest
+
 # === Development Workflows ===
 
 [group('workflow')]

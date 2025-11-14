@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.2, 8.3]
+
+    name: PHP ${{ matrix.php }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Start ChromaDB
+        run: docker compose up -d
+
+      - name: Wait for ChromaDB to be ready
+        run: |
+          echo "Waiting for ChromaDB to be ready..."
+          timeout 60 bash -c 'until curl -sf http://localhost:8000/api/v2/heartbeat > /dev/null; do sleep 2; done'
+          echo "ChromaDB is ready!"
+
+      - name: Run tests
+        run: composer test
+
+      - name: Stop ChromaDB
+        if: always()
+        run: docker compose down -v
+
+  code-quality:
+    runs-on: ubuntu-latest
+
+    name: Code Quality
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Run PHPStan
+        run: composer analyse
+
+      - name: Check code formatting
+        run: vendor/bin/pint --test
