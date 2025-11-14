@@ -121,6 +121,23 @@ When adding or modifying API client methods:
 3. Include examples in docblocks
 4. Add integration tests that run against a real ChromaDB instance
 
+### Accessing the OpenAPI Specification
+
+The OpenAPI specification is served by the running ChromaDB Docker container. After starting the container with `docker compose up -d`, you can access:
+
+- **Raw JSON spec**: `http://localhost:8000/openapi.json`
+- **Interactive Swagger UI**: `http://localhost:8000/docs/`
+
+```bash
+# Fetch the latest OpenAPI spec
+curl http://localhost:8000/openapi.json | jq . > chromadb-latest.json
+
+# Or just view it in your browser
+open http://localhost:8000/docs/
+```
+
+The spec is also stored in this repository as `chromadb.v2.json` for reference.
+
 ## License
 
 By contributing, your work becomes part of this project under the MIT License.
