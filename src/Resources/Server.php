@@ -16,9 +16,12 @@ use Saloon\Http\Response;
 class Server extends BaseResource
 {
     /**
-     * Resets the ChromaDB server.
+     * Reset the ChromaDB server (WARNING: Deletes all data).
      *
-     * @return bool Returns true if the server was reset successfully, false otherwise.
+     * CAUTION: This operation removes all collections, databases, and data from the server.
+     * Only use this in development/testing environments.
+     *
+     * @return bool Returns true if the server was reset successfully, false otherwise
      *
      * @throws FatalRequestException
      * @throws RequestException
@@ -31,11 +34,13 @@ class Server extends BaseResource
             return false;
         }
 
-        return json_decode($response->body(), true);
+        return true;
     }
 
     /**
-     * Gets the version of the ChromaDB server.
+     * Get the version of the ChromaDB server.
+     *
+     * @return string Server version string (e.g., "0.4.15")
      *
      * @throws FatalRequestException
      * @throws RequestException
@@ -48,21 +53,47 @@ class Server extends BaseResource
 
     }
 
+    /**
+     * Get server heartbeat with nanosecond timestamp.
+     *
+     * Used to verify the server is responsive and get precise timing information.
+     *
+     * @return Response Response containing nanosecond heartbeat timestamp
+     */
     public function heartbeat(): Response
     {
         return $this->connector->send(new Heartbeat);
     }
 
+    /**
+     * Perform pre-flight checks on the server.
+     *
+     * Used to verify server configuration and readiness before operations.
+     *
+     * @return Response Response containing pre-flight check results
+     */
     public function preFlightChecks(): Response
     {
         return $this->connector->send(new PreFlightChecks);
     }
 
+    /**
+     * Check the health status of the ChromaDB server.
+     *
+     * @return Response Response with HTTP 200 if healthy, error otherwise
+     */
     public function healthcheck(): Response
     {
         return $this->connector->send(new Healthcheck);
     }
 
+    /**
+     * Get current user identity and permissions.
+     *
+     * Returns information about the authenticated user including user_id, tenant, and accessible databases.
+     *
+     * @return Response Response containing user identity (user_id, tenant, databases)
+     */
     public function identity(): Response
     {
         return $this->connector->send(new GetUserIdentity);

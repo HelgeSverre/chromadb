@@ -17,6 +17,17 @@ use Saloon\Http\Response;
 
 class Items extends BaseResource
 {
+    /**
+     * Add items to a collection with embeddings, metadata, and documents.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  array|null  $ids  Array of unique IDs for the items (auto-generated if null)
+     * @param  array|string|null  $embeddings  Array of embedding vectors (2D array) or single embedding
+     * @param  array|null  $metadatas  Array of metadata objects (one per item)
+     * @param  array|string|null  $documents  Array of document strings or single document
+     * @param  array|null  $uris  Array of URIs referencing external documents
+     * @return Response Response confirming items were added
+     */
     public function add(
         string $collectionId,
         ?array $ids = null,
@@ -37,6 +48,17 @@ class Items extends BaseResource
         ));
     }
 
+    /**
+     * Update existing items in a collection.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  array  $ids  Array of IDs for items to update (must exist)
+     * @param  array|string|null  $embeddings  New embedding vectors
+     * @param  array|null  $metadatas  New metadata (replaces existing)
+     * @param  array|string|null  $documents  New document content
+     * @param  array|null  $uris  New URIs
+     * @return Response Response confirming items were updated
+     */
     public function update(
         string $collectionId,
         array $ids,
@@ -57,6 +79,17 @@ class Items extends BaseResource
         ));
     }
 
+    /**
+     * Upsert items (insert if not exist, update if exist) in a collection.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  array  $ids  Array of IDs (creates new items or updates existing)
+     * @param  array|string|null  $embeddings  Embedding vectors
+     * @param  array|null  $metadatas  Metadata objects
+     * @param  array|string|null  $documents  Document content
+     * @param  array|null  $uris  URIs
+     * @return Response Response confirming upsert operation
+     */
     public function upsert(
         string $collectionId,
         array $ids,
@@ -77,6 +110,18 @@ class Items extends BaseResource
         ));
     }
 
+    /**
+     * Retrieve specific items from a collection by IDs or filters.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  string|array  $ids  Single ID or array of IDs to retrieve
+     * @param  array|null  $include  What to include in response: ['documents', 'metadatas', 'embeddings', 'distances', 'uris']
+     * @param  int|null  $limit  Maximum number of items to return (pagination)
+     * @param  int|null  $offset  Number of items to skip (pagination)
+     * @param  array|null  $where  Metadata filters (e.g., ['category' => 'tech', 'year' => ['$gte' => 2020]])
+     * @param  array|null  $whereDocument  Document content filters (e.g., ['$contains' => 'keyword'])
+     * @return Response Response containing matching items
+     */
     public function get(
         string $collectionId,
         string|array $ids,
@@ -99,6 +144,15 @@ class Items extends BaseResource
         ));
     }
 
+    /**
+     * Delete items from a collection by IDs or filters.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  array|null  $ids  Array of IDs to delete (optional if using filters)
+     * @param  array|null  $where  Metadata filters to match items for deletion
+     * @param  array|null  $whereDocument  Document content filters to match items for deletion
+     * @return Response Response confirming deletion
+     */
     public function delete(
         string $collectionId,
         ?array $ids = null,
@@ -115,6 +169,12 @@ class Items extends BaseResource
         ));
     }
 
+    /**
+     * Count the total number of items in a collection.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @return int Total number of items in the collection
+     */
     public function count(
         string $collectionId
     ): int {
@@ -128,6 +188,20 @@ class Items extends BaseResource
         return (int) $response->body();
     }
 
+    /**
+     * Query items in a collection by semantic similarity using embeddings or text.
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  array  $queryEmbeddings  Array of query embedding vectors for similarity search
+     * @param  array|null  $queryTexts  Array of query texts (requires embedding function configured)
+     * @param  array|null  $where  Metadata filters to apply before similarity search
+     * @param  array|null  $whereDocument  Document content filters to apply before similarity search
+     * @param  array|null  $include  What to include in response: ['documents', 'metadatas', 'embeddings', 'distances', 'uris']
+     * @param  int|null  $nResults  Number of nearest neighbors to return per query
+     * @param  int|null  $limit  Maximum total results (pagination)
+     * @param  int|null  $offset  Number of results to skip (pagination)
+     * @return Response Response containing query results with similarity scores
+     */
     public function query(
         string $collectionId,
         array $queryEmbeddings = [],

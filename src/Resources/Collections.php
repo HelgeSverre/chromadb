@@ -15,6 +15,15 @@ use Saloon\Http\Response;
 
 class Collections extends BaseResource
 {
+    /**
+     * List all collections in the specified tenant and database.
+     *
+     * @param  int|null  $limit  Maximum number of collections to return (pagination)
+     * @param  int|null  $offset  Number of collections to skip (pagination)
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing array of collection objects
+     */
     public function list(
         ?int $limit = null,
         ?int $offset = null,
@@ -29,6 +38,17 @@ class Collections extends BaseResource
         ));
     }
 
+    /**
+     * Create a new collection with optional metadata and configuration.
+     *
+     * @param  string  $name  Name of the collection to create
+     * @param  bool  $getOrCreate  If true, return existing collection if name already exists
+     * @param  array|null  $metadata  Optional metadata key-value pairs
+     * @param  array|null  $configuration  Optional HNSW configuration (e.g., ['hnsw:space' => 'cosine', 'hnsw:construction_ef' => 100, 'hnsw:M' => 16])
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing the created collection details
+     */
     public function create(
         string $name,
         bool $getOrCreate = false,
@@ -47,6 +67,13 @@ class Collections extends BaseResource
         ));
     }
 
+    /**
+     * Count the total number of collections in the specified tenant and database.
+     *
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return int Total number of collections
+     */
     public function count(
         ?string $tenant = null,
         ?string $database = null,
@@ -61,6 +88,14 @@ class Collections extends BaseResource
 
     }
 
+    /**
+     * Retrieve a collection by its name.
+     *
+     * @param  string  $collectionName  Name of the collection to retrieve
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing collection details (id, name, metadata, etc.)
+     */
     public function get(
         string $collectionName,
         ?string $tenant = null,
@@ -73,6 +108,14 @@ class Collections extends BaseResource
         ));
     }
 
+    /**
+     * Delete a collection by its name.
+     *
+     * @param  string  $collectionName  Name of the collection to delete
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response confirming deletion
+     */
     public function delete(
         string $collectionName,
         ?string $tenant = null,
@@ -86,6 +129,17 @@ class Collections extends BaseResource
         ));
     }
 
+    /**
+     * Update a collection's name, metadata, or configuration.
+     *
+     * @param  string  $collectionId  UUID of the collection to update
+     * @param  string|null  $newName  New name for the collection
+     * @param  array|null  $newMetadata  New metadata to replace existing metadata
+     * @param  array|null  $newConfiguration  New HNSW configuration
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing updated collection details
+     */
     public function update(
         string $collectionId,
         ?string $newName = null,
@@ -104,6 +158,17 @@ class Collections extends BaseResource
         ));
     }
 
+    /**
+     * Create a copy (fork) of an existing collection.
+     *
+     * Note: Fork endpoint is only available in ChromaDB Cloud, not in local installations.
+     *
+     * @param  string  $collectionId  UUID of the collection to fork
+     * @param  string  $newName  Name for the new forked collection
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing the new collection details
+     */
     public function fork(string $collectionId, string $newName, ?string $tenant = null, ?string $database = null): Response
     {
         return $this->connector->send(new ForkCollection(
@@ -114,6 +179,15 @@ class Collections extends BaseResource
         ));
     }
 
+    /**
+     * Retrieve a collection by its CRN (Collection Resource Name).
+     *
+     * CRN format: crn:chroma:collection:tenant_name:database_name:collection_id
+     * Note: CRN endpoint implementation varies between ChromaDB versions.
+     *
+     * @param  string  $crn  Full Collection Resource Name
+     * @return Response Response containing collection details
+     */
     public function getByCrn(string $crn): Response
     {
         return $this->connector->send(new GetCollectionByCrn(crn: $crn));
