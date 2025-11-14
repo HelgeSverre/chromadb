@@ -1,6 +1,6 @@
 services:
   chroma:
-    image: chromadb/chroma:latest
+    image: chromadb/chroma:${CHROMA_VERSION:-1.1.0}
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/chroma:/chroma/chroma
       - ./config.yaml:/config.yaml
