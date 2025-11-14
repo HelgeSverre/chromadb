@@ -13,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3, 8.4, 8.5]
-        chroma-version: ["1.0.0", "1.0.5", "1.1.0"]
+        php: [ 8.2, 8.3, 8.4 ]
+        chroma-version: [ "1.1.0" ]
 
     name: PHP ${{ matrix.php }} / ChromaDB ${{ matrix.chroma-version }}
 
