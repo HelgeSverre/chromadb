@@ -129,3 +129,57 @@ function getRequestQuery($request)
 
     return $method->invoke($request);
 }
+
+// Version-aware test helpers for ChromaDB version-specific features
+
+/**
+ * Get the ChromaDB version from environment variable or by querying the server.
+ * Returns a cleaned version string (e.g., "1.3.7" without quotes).
+ */
+function getChromaVersion(): string
+{
+    // First check environment variable set by CI
+    $envVersion = getenv('CHROMA_VERSION');
+    if ($envVersion) {
+        return trim($envVersion, '"\'');
+    }
+
+    // Fallback to querying the server
+    try {
+        $chromadb = new HelgeSverre\Chromadb\Chromadb(
+            token: env('CHROMADB_TOKEN', 'test-token-chroma-local-dev'),
+            host: env('CHROMADB_HOST', 'http://localhost'),
+            port: env('CHROMADB_PORT', '8000')
+        );
+
+        $version = $chromadb->server()->version();
+
+        return trim($version, '"\'');
+    } catch (Exception $e) {
+        // If we can't connect, assume a recent version
+        return '1.3.7';
+    }
+}
+
+/**
+ * Check if current ChromaDB version meets minimum requirement.
+ */
+function chromaVersionAtLeast(string $minVersion): bool
+{
+    $currentVersion = getChromaVersion();
+
+    return version_compare($currentVersion, $minVersion, '>=');
+}
+
+/**
+ * Skip test if ChromaDB version is below minimum.
+ * Call this at the start of version-specific tests.
+ */
+function skipIfChromaVersionBelow(string $minVersion, string $feature): void
+{
+    if (! chromaVersionAtLeast($minVersion)) {
+        test()->markTestSkipped(
+            "{$feature} requires ChromaDB {$minVersion}+. Current version: ".getChromaVersion()
+        );
+    }
+}
