@@ -2,10 +2,13 @@
 
 namespace HelgeSverre\Chromadb\Resources;
 
+use HelgeSverre\Chromadb\Requests\Collections\AttachFunction;
 use HelgeSverre\Chromadb\Requests\Collections\CountCollections;
 use HelgeSverre\Chromadb\Requests\Collections\CreateCollection;
 use HelgeSverre\Chromadb\Requests\Collections\DeleteCollection;
+use HelgeSverre\Chromadb\Requests\Collections\DetachFunction;
 use HelgeSverre\Chromadb\Requests\Collections\ForkCollection;
+use HelgeSverre\Chromadb\Requests\Collections\GetAttachedFunction;
 use HelgeSverre\Chromadb\Requests\Collections\GetCollection;
 use HelgeSverre\Chromadb\Requests\Collections\GetCollectionByCrn;
 use HelgeSverre\Chromadb\Requests\Collections\ListCollections;
@@ -191,5 +194,101 @@ class Collections extends BaseResource
     public function getByCrn(string $crn): Response
     {
         return $this->connector->send(new GetCollectionByCrn(crn: $crn));
+    }
+
+    /**
+     * Attach a function to a collection for server-side processing.
+     *
+     * Attached functions enable automatic processing of collection data,
+     * such as computing statistics or triggering workflows when records are added.
+     *
+     * Note: This endpoint is only available in ChromaDB 1.3.0+
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  string  $name  Human-readable name for this attached function instance
+     * @param  string  $functionId  ID of the function to attach (e.g., 'statistics', 'record_counter')
+     * @param  string  $outputCollection  Name of the collection to store function output
+     * @param  array|null  $params  Optional JSON parameters for the function
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing attached function details and whether it was newly created
+     */
+    public function attachFunction(
+        string $collectionId,
+        string $name,
+        string $functionId,
+        string $outputCollection,
+        ?array $params = null,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new AttachFunction(
+            collectionId: $collectionId,
+            name: $name,
+            functionId: $functionId,
+            outputCollection: $outputCollection,
+            params: $params,
+            tenant: $tenant ?? $this->connector->getTenant(),
+            database: $database ?? $this->connector->getDatabase(),
+        ));
+    }
+
+    /**
+     * Get details of an attached function by name.
+     *
+     * Returns information about an attached function including its configuration,
+     * input/output collections, completion offset, and processing status.
+     *
+     * Note: This endpoint is only available in ChromaDB 1.3.0+
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  string  $functionName  Name of the attached function
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response containing attached function details
+     */
+    public function getAttachedFunction(
+        string $collectionId,
+        string $functionName,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new GetAttachedFunction(
+            collectionId: $collectionId,
+            functionName: $functionName,
+            tenant: $tenant ?? $this->connector->getTenant(),
+            database: $database ?? $this->connector->getDatabase(),
+        ));
+    }
+
+    /**
+     * Detach a function from a collection.
+     *
+     * This stops the attached function from processing new records.
+     * Optionally deletes the output collection that was created by the function.
+     *
+     * Note: This endpoint is only available in ChromaDB 1.3.0+
+     *
+     * @param  string  $collectionId  UUID of the collection
+     * @param  string  $functionName  Name of the attached function to detach
+     * @param  bool  $deleteOutput  Whether to delete the output collection as well
+     * @param  string|null  $tenant  Override default tenant
+     * @param  string|null  $database  Override default database
+     * @return Response Response confirming detachment
+     */
+    public function detachFunction(
+        string $collectionId,
+        string $functionName,
+        bool $deleteOutput = false,
+        ?string $tenant = null,
+        ?string $database = null,
+    ): Response {
+        return $this->connector->send(new DetachFunction(
+            collectionId: $collectionId,
+            functionName: $functionName,
+            deleteOutput: $deleteOutput,
+            tenant: $tenant ?? $this->connector->getTenant(),
+            database: $database ?? $this->connector->getDatabase(),
+        ));
     }
 }
