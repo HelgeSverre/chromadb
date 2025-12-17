@@ -5,6 +5,44 @@ All notable changes to `chromadb` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-12-17
+
+### Added
+
+- **ChromaDB 1.3.x Support** - Full compatibility with ChromaDB versions 1.1.0 through 1.3.7
+    - CI matrix now tests against ChromaDB 1.1.0, 1.2.2, and 1.3.7
+    - Backward compatibility maintained for all tested versions
+    - Default Docker image updated to 1.3.7
+
+- **Attached Functions API** (ChromaDB 1.3.0+) - Server-side function attachment for collections
+    - `Collections::attachFunction()` - Attach functions to collections for automatic processing
+    - `Collections::getAttachedFunction()` - Get details of an attached function by name
+    - `Collections::detachFunction()` - Remove attached functions from collections
+    - Enables server-side statistics computation and workflow triggers
+
+- **Version-Aware Test Helpers** - Utilities for testing against multiple ChromaDB versions
+    - `getChromaVersion()` - Get current ChromaDB version from environment or server
+    - `chromaVersionAtLeast()` - Check if version meets minimum requirement
+    - `skipIfChromaVersionBelow()` - Skip tests that require newer ChromaDB versions
+
+### Changed
+
+- **Version Compatibility** - Updated supported ChromaDB range
+    - Before: `1.0.0 - 1.1.x`
+    - After: `1.0.0 - 1.3.x`
+
+- **CI Matrix** - Expanded test coverage
+    - PHP versions: 8.2, 8.3, 8.4
+    - ChromaDB versions: 1.1.0, 1.2.2, 1.3.7
+    - Total: 9 test combinations (3 PHP × 3 ChromaDB)
+
+### Notes
+
+- Attached functions require ChromaDB 1.3.0+ (tests gracefully skip on older versions)
+- New features degrade gracefully with appropriate error handling on unsupported versions
+
+---
+
 ## [2.2.0] - 2025-10-28
 
 ### Added
