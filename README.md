@@ -19,9 +19,16 @@ A **framework-agnostic PHP client** for the [ChromaDB](https://github.com/chroma
 
 This package supports **ChromaDB v2 API**. The v1 API has been deprecated by ChromaDB.
 
-- **ChromaDB Server:** 1.0.0 - 1.1.x
+- **ChromaDB Server:** 1.0.0 - 1.3.x
 - **PHP:** 8.2+
 - **Laravel:** 10.x, 11.x, 12.x (optional)
+
+### Version-Specific Features
+
+| Feature | Minimum Version |
+|---------|-----------------|
+| Core API (collections, items, tenants, databases) | 1.0.0 |
+| Attached Functions | 1.3.0 |
 
 ## Installation
 
@@ -347,6 +354,36 @@ $productionClient = $chromadb
     ->withTenant('my_org')
     ->withDatabase('production');
 ```
+
+### Attached Functions (ChromaDB 1.3.0+)
+
+Attach server-side functions to collections for automatic processing:
+
+```php
+// Attach a function to a collection
+$response = $chromadb->collections()->attachFunction(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    name: 'my-stats',
+    functionId: 'statistics',
+    outputCollection: 'stats-output',
+    params: ['key' => 'value'] // optional
+);
+
+// Get attached function details
+$response = $chromadb->collections()->getAttachedFunction(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    functionName: 'my-stats'
+);
+
+// Detach a function from a collection
+$response = $chromadb->collections()->detachFunction(
+    collectionId: '3ea5a914-e2ab-47cb-b285-8e585c9af4f3',
+    functionName: 'my-stats',
+    deleteOutput: true // optionally delete the output collection
+);
+```
+
+> **Note:** Attached functions require ChromaDB 1.3.0 or higher. These methods will return error responses on older versions.
 
 ## Laravel Integration (Optional)
 
