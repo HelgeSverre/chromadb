@@ -5,14 +5,14 @@ All notable changes to `chromadb` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.3.0] - 2025-12-17
+## [3.0.0] - 2026-04-15
 
 ### Added
 
-- **ChromaDB 1.3.x Support** - Full compatibility with ChromaDB versions 1.1.0 through 1.3.7
-    - CI matrix now tests against ChromaDB 1.1.0, 1.2.2, and 1.3.7
+- **ChromaDB 1.5.x Support** - Full compatibility with ChromaDB versions 1.1.0 through 1.5.7
+    - CI matrix now tests against ChromaDB 1.1.0, 1.3.7, and 1.5.7
     - Backward compatibility maintained for all tested versions
-    - Default Docker image updated to 1.3.7
+    - Default Docker image updated to 1.5.7
 
 - **Attached Functions API** (ChromaDB 1.3.0+) - Server-side function attachment for collections
     - `Collections::attachFunction()` - Attach functions to collections for automatic processing
@@ -27,19 +27,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Saloon 4 Compatibility** - Updated the HTTP client stack to address security advisories
+    - `saloonphp/saloon` now requires `^4.0`
+    - `saloonphp/laravel-plugin` now requires `^4.2`
+    - Resolves Composer audit failures caused by insecure Saloon 3 releases
+
+- **Laravel Compatibility** - Updated optional Laravel integration for current framework versions
+    - Laravel 11, 12.39+, and 13 are supported through Saloon's Laravel plugin
+    - Laravel 10 support was dropped because Saloon Laravel plugin 4 no longer supports it
+    - Development tooling now supports Testbench 9/10/11, Pest 3/4, and Larastan 3
+
+- **Test Coverage Configuration** - Coverage reports are now generated only by `composer test-coverage`
+    - Normal test runs no longer fail on machines without Xdebug or PCOV under PHPUnit 12
+    - Coverage output paths remain unchanged for the dedicated coverage command
+
 - **Version Compatibility** - Updated supported ChromaDB range
     - Before: `1.0.0 - 1.1.x`
-    - After: `1.0.0 - 1.3.x`
+    - After: `1.0.0 - 1.5.x`
 
 - **CI Matrix** - Expanded test coverage
     - PHP versions: 8.2, 8.3, 8.4
-    - ChromaDB versions: 1.1.0, 1.2.2, 1.3.7
+    - ChromaDB versions: 1.1.0, 1.3.7, 1.5.7
     - Total: 9 test combinations (3 PHP × 3 ChromaDB)
+
+- **Delete Response Compatibility** - Tests now accept both ChromaDB delete response shapes
+    - ChromaDB <=1.3 returns an empty array for item delete responses
+    - ChromaDB 1.5.x can return `{"deleted": n}`
+
+### Breaking Changes
+
+- **Laravel 10 projects must remain on v2.x** or upgrade Laravel before using v3.0.0.
+- **Saloon 3 projects must move to Saloon 4** before installing v3.0.0.
 
 ### Notes
 
 - Attached functions require ChromaDB 1.3.0+ (tests gracefully skip on older versions)
 - New features degrade gracefully with appropriate error handling on unsupported versions
+- ChromaDB 1.5.7 still reports `"1.0.0"` from `/api/v2/version`; CI passes `CHROMA_VERSION` explicitly when testing version-specific behavior
 
 ---
 

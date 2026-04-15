@@ -134,12 +134,12 @@ function getRequestQuery($request)
 
 /**
  * Get the ChromaDB version from environment variable or by querying the server.
- * Returns a cleaned version string (e.g., "1.3.7" without quotes).
+ * Returns a cleaned version string (e.g., "1.5.7" without quotes).
  */
 function getChromaVersion(): string
 {
-    // First check environment variable set by CI
-    $envVersion = getenv('CHROMA_VERSION');
+    // First check environment variables set by CI or loaded from .env.
+    $envVersion = getenv('CHROMA_VERSION') ?: ($_ENV['CHROMA_VERSION'] ?? $_SERVER['CHROMA_VERSION'] ?? null);
     if ($envVersion) {
         return trim($envVersion, '"\'');
     }
@@ -157,7 +157,7 @@ function getChromaVersion(): string
         return trim($version, '"\'');
     } catch (Exception $e) {
         // If we can't connect, assume a recent version
-        return '1.3.7';
+        return '1.5.7';
     }
 }
 

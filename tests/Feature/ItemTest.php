@@ -327,9 +327,12 @@ it('deletes items correctly', function () {
         ids: ['item1', 'item2']
     );
 
-    // In v2 API, delete returns an empty array
+    // ChromaDB <=1.3 returns an empty array; 1.5.x returns ['deleted' => count].
     expect($deleteItemsResponse->ok())->toBeTrue()
-        ->and($deleteItemsResponse->json())->toEqual([]);
+        ->and($deleteItemsResponse->json())->toBeIn([
+            [],
+            ['deleted' => 2],
+        ]);
 
     // Verify deletion by counting
     $countAfterDelete = $this->chromadb->items()->count(collectionId: $collectionId);
@@ -337,7 +340,7 @@ it('deletes items correctly', function () {
 });
 
 it('performs hybrid search correctly', function () {
-    // NOTE: Search endpoint is not implemented in ChromaDB v1.0.0 (returns 501 Not Implemented)
+    // NOTE: Search endpoint is not implemented in local ChromaDB (returns 501 Not Implemented)
     // This test documents the expected behavior for when it becomes available
 
     // Setup collection with items
@@ -377,10 +380,10 @@ it('performs hybrid search correctly', function () {
         ]]
     );
 
-    // Search endpoint returns 501 Not Implemented in v1.0.x
+    // Search endpoint returns 501 Not Implemented in local ChromaDB
     // When implemented, it should return 200 with search results
     expect($response->status())->toBeIn([200, 501]);
-})->skip('Search endpoint not implemented in ChromaDB v1.0.x (local) - returns 501. Hybrid search requires combining query methods.');
+})->skip('Search endpoint is not implemented in local ChromaDB 1.5.7 - returns 501. Hybrid search requires combining query methods.');
 
 it('adds items with uris correctly', function () {
     $collection = $this->chromadb->collections()->create('test_uris_collection', getOrCreate: true);

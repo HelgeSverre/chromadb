@@ -76,7 +76,7 @@ it('updates a collection name correctly', function () {
 
 it('forks a collection correctly', function () {
     // NOTE: Fork endpoint is only available in Chroma Cloud (hosted version)
-    // Local ChromaDB v1.0.x returns 501 "Collection forking is unsupported for local chroma"
+    // Local ChromaDB returns 501 "Collection forking is unsupported for local chroma"
 
     // Create original collection
     $original = $this->chromadb->collections()->create('original_collection', getOrCreate: true);
@@ -97,13 +97,13 @@ it('forks a collection correctly', function () {
         newName: 'forked_collection'
     );
 
-    // Fork returns 501 in local ChromaDB v1.0.x
+    // Fork returns 501 in local ChromaDB
     expect($forkResponse->status())->toBeIn([200, 501]);
-})->skip('Fork endpoint only available in Chroma Cloud (hosted). Local v1.0.x returns 501.');
+})->skip('Fork endpoint is only available in Chroma Cloud (hosted). Local ChromaDB returns 501.');
 
 it('can get collection by CRN (future feature)', function () {
     // NOTE: CRN (Collection Resource Name) endpoint is a new feature added Nov 13, 2025
-    // Not yet available in any released ChromaDB version (will be in version after v1.3.4)
+    // Still not usable in local ChromaDB 1.5.7.
     //
     // Expected format: tenant_resource_name:database_name:collection_name
     // Prerequisite: Tenant must have a resource_name set via SetTenantResourceName API
@@ -123,7 +123,7 @@ it('can get collection by CRN (future feature)', function () {
     // $response = $this->chromadb->collections()->getByCrn($crn);
     // expect($response->ok())->toBeTrue();
     // expect($response->json('name'))->toBe('test_crn_collection');
-})->skip('CRN endpoint not yet available in any released ChromaDB version. Feature added Nov 13, 2025, will be in version after v1.3.4.');
+})->skip('CRN endpoint is still not usable in local ChromaDB 1.5.7.');
 
 // Wave 2: Pagination Edge Cases (with tenant isolation)
 it('list with negative offset returns empty or errors gracefully', function () {

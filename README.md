@@ -19,9 +19,9 @@ A **framework-agnostic PHP client** for the [ChromaDB](https://github.com/chroma
 
 This package supports **ChromaDB v2 API**. The v1 API has been deprecated by ChromaDB.
 
-- **ChromaDB Server:** 1.0.0 - 1.3.x
+- **ChromaDB Server:** 1.0.0 - 1.5.x
 - **PHP:** 8.2+
-- **Laravel:** 10.x, 11.x, 12.x (optional)
+- **Laravel:** 11.x, 12.x, 13.x (optional)
 
 ### Version-Specific Features
 

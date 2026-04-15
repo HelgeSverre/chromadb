@@ -3,8 +3,9 @@
 /**
  * Attached Functions API Tests
  *
- * Note: Attached functions are a ChromaDB 1.3.0+ feature that requires a supported backend.
- * The local SQLite backend (SqliteSysDb) does NOT support attached functions - it returns 501.
+ * Note: Attached functions are a ChromaDB 1.3.0+ feature.
+ * Local ChromaDB supports the request surface in recent versions, but full
+ * lifecycle behavior can still depend on the configured backend/function.
  * Full functionality is available with Chroma Cloud or other supported backends.
  *
  * These tests verify:
@@ -106,7 +107,7 @@ describe('Attached Functions API (ChromaDB 1.3.0+)', function () {
             outputCollection: 'lifecycle-output'
         );
 
-        // Skip remainder if attach is not supported (501 = not implemented in SqliteSysDb)
+        // Skip remainder if attach is not supported by the configured backend/function.
         if ($attachResponse->status() === 501) {
             test()->markTestSkipped('Attached functions not implemented in local SQLite backend (requires Chroma Cloud)');
         }
